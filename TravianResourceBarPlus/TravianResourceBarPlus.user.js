@@ -5048,8 +5048,8 @@ function progressbar_ReInit () {
 }
 
 function progressbar_init() {
-	RB_addStyle(".rbp-restime { position:absolute; top:100%; left:50%; transform:translateX(-50%); min-width:calc(100% - 8px); box-sizing:border-box; padding:1px 8px 2px; white-space:nowrap; text-align:center; font:bold 11px/15px sans-serif; color:#3b2f17; background:linear-gradient(#f7efd9,#e2d1a3); border:2px solid #5d4a28; border-top:0; border-radius:0 0 7px 7px; box-shadow:0 2px 3px rgba(0,0,0,0.35); pointer-events:none; z-index:10; } " +
-		".rbp-restime span span { margin-left:5px; }");
+	RB_addStyle(".rbp-restime { position:absolute; top:100%; left:6px; right:6px; box-sizing:border-box; padding:1px 4px 2px; white-space:nowrap; text-align:center; font:bold 11px/15px sans-serif; color:#3b2f17; background:linear-gradient(#f7efd9,#e2d1a3); border:2px solid #5d4a28; border-top:0; border-radius:0 0 7px 7px; box-shadow:0 2px 3px rgba(0,0,0,0.35); pointer-events:none; z-index:10; } " +
+		".rbp-restime span span:last-child { display:none; }");
 	calculationPPH();
 	var mm = RB.Setup[22] > 0 ? normalProductionCalc( sumPPH ) : [0,0];
 	var ssPPH = 0;

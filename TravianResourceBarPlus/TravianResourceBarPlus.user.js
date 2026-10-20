@@ -2986,12 +2986,12 @@ rbpTheme = "."+allIDs[4]+" {background-color:#fbf6e8;border:1px solid #b9a36f;bo
 	"table#"+allIDs[1]+" td."+allIDs[11]+", table#"+allIDs[1]+" td."+allIDs[12]+" {background-color:#f3e9cf;}" +
 	"table#"+allIDs[0]+" {background-color:#fbf6e8;} table#"+allIDs[0]+" td {border-color:#e3d6b4;}" +
 	"."+allIDs[7]+" td {border-color:#e3d6b4;}" +
-	".rbp-a2b {display:inline-block;vertical-align:top;margin:8px 8px 8px 0;border:1px solid #d8c9a3;border-radius:6px;overflow:hidden;background:#fdf8ea;font-size:12px;color:#3b2f17;}" +
-	".rbp-a2b-h {background:#7d8a44;color:#fff;font-weight:bold;padding:4px 8px;}" +
-	".rbp-a2b table {border-collapse:collapse;background:transparent;}" +
-	".rbp-a2b th, .rbp-a2b td {padding:3px 8px;text-align:right;border:0;border-bottom:1px solid #e5dcc0;background:transparent;white-space:nowrap;}" +
-	".rbp-a2b th {font-size:11px;color:#6b5a36;} .rbp-a2b td.rbp-lbl {text-align:left;font-weight:bold;}" +
-	".rbp-a2b tr:last-child td {border-bottom:0;} .rbp-a2b img, .rbp-a2b i {vertical-align:middle;}";
+	"#"+allIDs[21]+" {display:table;min-width:340px;margin:8px 0;border:1px solid #d8c9a3;border-radius:6px;overflow:hidden;background:#fdf8ea;font-size:12px;color:#3b2f17;}" +
+	"#"+allIDs[21]+" .rbp-a2b-h {background:#7d8a44;color:#fff;font-weight:bold;padding:4px 8px;}" +
+	"#"+allIDs[21]+" table {width:100%;border-collapse:collapse;background:transparent;margin:0;}" +
+	"#"+allIDs[21]+" th, #"+allIDs[21]+" td {padding:3px 8px;text-align:right;border:0;border-bottom:1px solid #e5dcc0;background:transparent;white-space:nowrap;}" +
+	"#"+allIDs[21]+" th {font-size:11px;color:#6b5a36;} #"+allIDs[21]+" td.rbp-lbl {text-align:left;font-weight:bold;}" +
+	"#"+allIDs[21]+" tr:last-child td {border-bottom:0;} #"+allIDs[21]+" img, #"+allIDs[21]+" i {vertical-align:middle;}";
 
 defaultCSSfixes = "table.outSettler thead td { background-color: #b5e0f7; }" +
 "#sidebarAfterContent .buttonFramed.withIcon svg { max-width: 23px; max-height: 23px; }" +
@@ -7486,7 +7486,7 @@ function a2bInfo () {
 		$em('TR',[lbl($e('i',[['class','r5']]),'Utrzymanie'),$em('TD',[num(ts[5])],[['colspan','2']])]),
 		$em('TR',[lbl(trImg(allIDs[33]),'Udźwig'),$em('TD',[num(ts[4])],[['colspan','2']])])]);
 	rP.appendChild(rT);
-	if( $g('ok') ) $g('ok').parentNode.insertBefore(rP, $g('ok').parentNode.lastElementChild);
+	if( $g('ok') ) $g('ok').parentNode.insertBefore(rP, $g('ok').nextSibling); // right under the send button, above the wave builder summary
 	else if( $g('raidListSlot') ) insertAfter(rP, $g('raidListSlot'));
 }
 

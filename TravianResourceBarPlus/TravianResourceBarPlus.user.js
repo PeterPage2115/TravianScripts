@@ -8036,7 +8036,7 @@ function analyzerBattle () {
 		var atCoord = getVid(adCoords.snapshotItem(0).getAttribute('href'));
 		var dfCoord = getVid(adCoords.snapshotItem(1).getAttribute('href'));
 		var distance = Math.round(calcDistance(atCoord,dfCoord));
-		var distRef = $ee('SPAN','&lt;- '+distance+' -&gt;',[['style','white-space:nowrap;']]);
+		var distRef = $ee('SPAN','&harr; '+distance+' pól',[['style','white-space:nowrap;'],['title','Najedź, aby zobaczyć czasy marszu']]);
 		distRef.addEventListener("mouseover", function() {
 			var al = parseInt(RB.Setup[9]) == 0 ? parseInt(RB.village_Var[1]) : parseInt(RB.Setup[9]) - 1;
 			makeTooltip(showAllTTime(1, [atCoord,dfCoord], al));
@@ -8044,54 +8044,92 @@ function analyzerBattle () {
 		distRef.addEventListener("mouseout", removeTooltip, false);
 	} else var distRef = ' ';
 
-	var newTABLE = $e('TABLE',[['class',allIDs[7]],['style','width:100%;margin-top:10px;']]);
-	newTABLE.appendChild($em('TR',[$c(distRef),$c(attakerN),$c(defenderN),$c(gtext('total'))]));
-	// strength
-	var newTR = $ee('TR',$em('TD',[trImg('unit u13'),'+',trImg('unit u16')]));
-	var strAP = atS[0][0]-atS[3];
-	newTR.appendChild($em('TD',[humanRF(strAP),' + ',humanRF(atS[3])]));
-	newTR.appendChild($em('TD',[humanRF(dfS[0][0]),' + ',humanRF(dfS[0][1])]));
+	RB_addStyle(".rbp-ba { width:100%; margin-top:10px; border-collapse:separate; border-spacing:0; background:#fbf6e8; border:1px solid #c9b78f; border-radius:6px; overflow:hidden; font-size:12px; color:#3b2f17; } " +
+		".rbp-ba th { background:linear-gradient(#ebdcb4,#d5c18d); color:#4b3a1a; padding:6px 8px; font-weight:bold; text-align:center; border-bottom:1px solid #b9a36f; } " +
+		".rbp-ba td { padding:6px 8px; border-bottom:1px solid #e3d6b4; text-align:center; vertical-align:middle; } " +
+		".rbp-ba tr:last-child td { border-bottom:0; } " +
+		".rbp-ba td.rbp-lbl { text-align:left; } " +
+		".rbp-ba td.rbp-lbl small, .rbp-ba td small { display:block; color:#8a7a56; font-size:10px; font-weight:normal; } " +
+		".rbp-ba .rbp-bar { height:5px; background:#e3d6b4; border-radius:3px; margin-top:3px; overflow:hidden; } " +
+		".rbp-ba .rbp-bar span { display:block; height:100%; background:#8b6b2f; } " +
+		".rbp-ba .rbp-res span { display:inline-block; margin:0 6px 2px 0; white-space:nowrap; } " +
+		".rbp-ba .rbp-res b { display:block; } " +
+		".rbp-ba .pos { color:#2e7d32; } .rbp-ba .neg { color:#c62828; }");
+
+	function td ( parts, cls, title ) {
+		var t = $em('TD',parts);
+		if( cls ) t.className = cls;
+		if( title ) t.title = title;
+		return t;
+	}
+	function lbl ( icons, name, sub ) {
+		return td([].concat(icons,[' ',$ee('B',name),$ee('SMALL',sub)]),'rbp-lbl');
+	}
+	function ic ( cls ) { return $e('i',[['class',cls],['style','vertical-align:middle;']]); }
+	function share ( v, detail ) {
+		var c = td([$ee('B',v+'%')]);
+		if( detail ) c.appendChild($ee('SMALL',detail));
+		if( !isNaN(parseInt(v)) ) c.appendChild($ee('DIV','<span style="width:'+Math.max(0,Math.min(100,parseInt(v)))+'%"></span>',[['class','rbp-bar']]));
+		return c;
+	}
+	function resCell ( r, sum, title ) {
+		var box = $e('DIV',[['class','rbp-res']]);
+		for( var k = 0; k < 4; k++ ) box.appendChild($em('SPAN',[ic('r'+(k+1)),' '+humanRF(r[k])]));
+		box.appendChild($ee('B','&Sigma; '+humanRF(sum)));
+		return td([box],'',title);
+	}
+
+	var newTABLE = $e('TABLE',[['class','rbp-ba']]);
+	newTABLE.appendChild($ee('THEAD',$em('TR',[$ee('TH',distRef),$ee('TH',attakerN),$ee('TH',defenderN),$ee('TH','Udział napastnika')])));
+
+	// strength: infantry + cavalry, attacker vs defender
 	var proc = [0,0];
+	var strAP = atS[0][0]-atS[3];
 	proc[0] = Math.round(strAP/(strAP+dfS[0][0])*100).NaN0();
 	proc[1] = Math.round(atS[3]/(atS[3]+dfS[0][1])*100).NaN0();
-	newTR.appendChild($c(proc[0]+' + '+proc[1]+' = '+Math.round((proc[0]+proc[1])/(proc[0]>0 && proc[1] > 0 ? 2: 1))+'%'));
-	newTABLE.appendChild(newTR);
-	// crop
+	newTABLE.appendChild($em('TR',[
+		lbl([trImg('unit u13'),trImg('unit u16')],'Siła bojowa','piechota + jazda'),
+		td([humanRF(strAP)+' + '+humanRF(atS[3])]),
+		td([humanRF(dfS[0][0])+' + '+humanRF(dfS[0][1])]),
+		share(Math.round((proc[0]+proc[1])/(proc[0]>0 && proc[1] > 0 ? 2: 1)),proc[0]+'% piechota · '+proc[1]+'% jazda')]));
+
+	// crop upkeep: sent / killed
 	proc[0] = Math.round(atS[1][6]/(atS[1][6]+dfS[1][6])*100).NaN0();
-	var newTR = $em('TR',[$c($e('i',[['class','r5']])),$c(humanRF(atS[0][6])+'/'+humanRF(atS[1][6])),
-					$c(humanRF(dfS[0][6])+'/'+humanRF(dfS[1][6])),$c(proc[0]+'%')]);
-	newTABLE.appendChild(newTR);
-	//hospital
+	newTABLE.appendChild($em('TR',[
+		lbl([ic('r5')],'Jednostki','zużycie zboża: wysłane / polegli'),
+		td([humanRF(atS[0][6])+' / '+humanRF(atS[1][6])]),
+		td([humanRF(dfS[0][6])+' / '+humanRF(dfS[1][6])]),
+		share(proc[0])]));
+
+	// hospital
 	proc[0] = Math.round(atS[2][6]/(atS[2][6]+dfS[2][6])*100).NaN0();
-	var newTR = $em('TR',[$c($e('IMG',[['src',img_wounded]])),$c(humanRF(atS[2][6])),$c(humanRF(dfS[2][6])),$c(proc[0]+'%')]);
-	newTABLE.appendChild(newTR);
-	// resource
-	var newTR = $ee('TR',$em('TD',[$e('i',[['class','r1']]),'+',$e('i',[['class','r2']]),'+',$e('i',[['class','r3']]),'+',$e('i',[['class','r4']]),'=',$e('i',[['class','resources_small']])]));
+	newTABLE.appendChild($em('TR',[
+		lbl([$e('IMG',[['src',img_wounded]])],'Szpital','ranni (zużycie zboża)'),
+		td([humanRF(atS[2][6])]),
+		td([humanRF(dfS[2][6])]),
+		share(proc[0])]));
+
+	// resources: value of killed units; defender also loses the plunder
 	proc[0] = atS[1][2]+atS[1][3]+atS[1][4]+atS[1][5];
 	if( atS[0][1] == 0 ) ress = [0,0,0,0,0];
 	proc[5] = ress[1]+ress[2]+ress[3]+ress[4];
 	proc[1] = dfS[1][2]+dfS[1][3]+dfS[1][4]+dfS[1][5];
 	proc[4] = proc[1]+proc[5];
 	proc[2] = Math.round((proc[0])/(proc[0]+proc[4])*100).NaN0();
-	newTR.appendChild($em('TD',[humanRF(atS[1][2])+' + '+humanRF(atS[1][3])+' + '+humanRF(atS[1][4])+' + '+humanRF(atS[1][5]),$e('BR'),' = '+humanRF(proc[0])]));
-	newTR.appendChild($em('TD',[humanRF(dfS[1][2]+ress[1])+' + '+humanRF(dfS[1][3]+ress[2])+' + '+humanRF(dfS[1][4]+ress[3])+' + '+humanRF(dfS[1][5]+ress[4]),$e('BR'),' = '+humanRF(proc[4])]));
-	newTR.appendChild($c(proc[2]+'%'));
-	newTABLE.appendChild(newTR);
-	// carry
-	var newTR = $ee('TR',$c(trImg(allIDs[33])));
-	proc[4] = atS[0][1] > 0 ? Math.round(proc[5]/atS[0][1]*100) : 0;
-	newTR.appendChild($c(proc[4]+'%',[['style','font-weight:bold;']]));
-	newTR.appendChild($c($a('(kirilloid.ru/warsim)',[['href','http://travian.kirilloid.ru/warsim2.php'+kirilloid],['target','_blank'],['style','font-size:11px;']])));
-	proc[4] = proc[5] > 0 ? Math.round((proc[5]-proc[0])/proc[5]*100) : '--';
-	newTR.appendChild($c(proc[4]+'%'));
-	newTABLE.appendChild(newTR);
+	newTABLE.appendChild($em('TR',[
+		lbl([ic('r1'),ic('r2'),ic('r3'),ic('r4')],'Straty w surowcach','wartość poległych jednostek'),
+		resCell([atS[1][2],atS[1][3],atS[1][4],atS[1][5]],proc[0]),
+		resCell([dfS[1][2]+ress[1],dfS[1][3]+ress[2],dfS[1][4]+ress[3],dfS[1][5]+ress[4]],proc[4],'straty obrońcy + zrabowane surowce'),
+		share(proc[2])]));
 
-	//var toLog = $a('https://www.inactivesearch.it/tools/battle-reports');
-	//toLog.addEventListener("click", addReport, true);
-	var toLog = $a('https://www.inactivesearch.it/tools/battle-reports',[['href','https://www.inactivesearch.it/tools/battle-reports'],['target','_blank']]);
-	var kLog = $a('http://travian.kirilloid.ru/report.php',[['href','http://travian.kirilloid.ru/report.php'],['target','_blank']]);
-	newTABLE.appendChild($ee('TR',$c(toLog,[['colspan',4]])));
-	newTABLE.appendChild($ee('TR',$c(kLog,[['colspan',4]])));
+	// plunder
+	proc[3] = atS[0][1] > 0 ? Math.round(proc[5]/atS[0][1]*100) : 0;
+	var net = proc[5] > 0 ? Math.round((proc[5]-proc[0])/proc[5]*100) : null;
+	newTABLE.appendChild($em('TR',[
+		lbl([trImg(allIDs[33])],'Łup','zrabowane surowce'),
+		td([humanRF(proc[5]),$ee('SMALL','udźwig wykorzystany w '+proc[3]+'%')]),
+		td(['–']),
+		td([$ee('B',net === null ? '--' : (net >= 0 ? '+' : '')+net+'%',[['class',net === null ? '' : (net >= 0 ? 'pos' : 'neg')]]),$ee('SMALL','zysk netto')])]));
 
 	$gc('attacker')[0].parentNode.parentNode.appendChild(newTABLE);
 }

@@ -2967,6 +2967,26 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"."+allIDs[47]+" { height:12px;width:12px;background: url("+img_tinfo+") no-repeat 0px 0px;margin:0px 5px; display: inline-block; }" +
 	"img."+allIDs[45]+" {margin:0px 5px;} ."+allIDs[46]+" * {background-color:#ECECEC !important;}";
 
+// fork: one parchment look for every RB+ window, matching the battle analyzer
+rbpTheme = "."+allIDs[4]+" {background-color:#fbf6e8;border:1px solid #b9a36f;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.35);color:#3b2f17;}" +
+	"."+allIDs[5]+" {height:12px;background:linear-gradient(#ebdcb4,#d5c18d);border-bottom:1px solid #b9a36f;}" +
+	"div#"+allIDs[3]+" {background-color:#fbf6e8;border:1px solid #b9a36f;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.3);padding:3px;color:#3b2f17;}" +
+	"."+allIDs[4]+" input[type=text], ."+allIDs[4]+" input:not([type]), ."+allIDs[4]+" select, ."+allIDs[4]+" textarea {border:1px solid #c9b78f;border-radius:4px;background-color:#fff;padding:2px 4px;}" +
+	"table#"+allIDs[6]+" {background-color:#fbf6e8;font-size:12px;color:#3b2f17;}" +
+	"table#"+allIDs[6]+" td {border:0;border-bottom:1px solid #e3d6b4;padding:3px 8px;}" +
+	"table#"+allIDs[6]+" td[colspan] {background:linear-gradient(#ebdcb4,#d5c18d);padding:5px 8px;color:#4b3a1a;}" +
+	"table#"+allIDs[6]+" tr:hover td:not([colspan]) {background-color:#f3e9cf;}" +
+	"table#"+allIDs[8]+", table#"+allIDs[9]+" {background-color:#fbf6e8;font-size:12px;color:#3b2f17;}" +
+	"table#"+allIDs[8]+" thead td, table#"+allIDs[9]+" thead td {background:linear-gradient(#ebdcb4,#d5c18d);color:#4b3a1a;font-weight:bold;padding:4px 5px;}" +
+	"table#"+allIDs[8]+" tbody tr:nth-child(even), table#"+allIDs[9]+" tbody tr:nth-child(even) {background-color:rgba(0,0,0,0.035);}" +
+	"table#"+allIDs[8]+" tbody tr:hover, table#"+allIDs[9]+" tbody tr:hover {background-color:#f3e2b8;}" +
+	"table#"+allIDs[1]+" {border-radius:6px;overflow:hidden;}" +
+	"table#"+allIDs[1]+" td, table#"+allIDs[1]+" th {border-color:#e3d6b4;}" +
+	"table#"+allIDs[1]+" th {background:linear-gradient(#ebdcb4,#d5c18d);padding:2px 4px;}" +
+	"table#"+allIDs[1]+" td."+allIDs[11]+", table#"+allIDs[1]+" td."+allIDs[12]+" {background-color:#f3e9cf;}" +
+	"table#"+allIDs[0]+" {background-color:#fbf6e8;} table#"+allIDs[0]+" td {border-color:#e3d6b4;}" +
+	"."+allIDs[7]+" td {border-color:#e3d6b4;}";
+
 defaultCSSfixes = "table.outSettler thead td { background-color: #b5e0f7; }" +
 "#sidebarAfterContent .buttonFramed.withIcon svg { max-width: 23px; max-height: 23px; }" +
 "#villageBoxes .buttonFramed.withIcon svg { max-width: 22px; max-height: 22px; }";
@@ -4960,19 +4980,19 @@ function progressbar_updValues() {
 	}
 
 	if( percentUsed < 50 ){
-		changeColor('perreso','blue');
+		changeColor('perreso','#9fd8ff');
 	} else if( parseInt(percentUsed) < 70 ){
-		changeColor('perreso','#FF6600');
+		changeColor('perreso','#ffc266');
 	} else if( parseInt(percentUsed) >= 70 ){
-		changeColor('perreso','red');
+		changeColor('perreso','#ff8a80');
 	}
 
 	if( timerRB[j].time < parseFloat(RB.Setup[6])*3600 ){
-		changeColor('resotime','red');
+		changeColor('resotime','#ff8a80');
 	} else if( timerRB[j].time < parseFloat(RB.Setup[5])*3600 ){
-		changeColor('resotime','#9900CC');
+		changeColor('resotime','#e3b3ff');
 	} else {
-		changeColor('resotime','green');
+		changeColor('resotime','#b6f07a');
 	}
 
 }
@@ -5028,7 +5048,8 @@ function progressbar_ReInit () {
 }
 
 function progressbar_init() {
-	RB_addStyle(".rbp-restime { position:absolute; top:100%; left:50%; transform:translateX(-50%); margin-top:2px; padding:1px 6px; white-space:nowrap; text-align:center; font:bold 11px/16px sans-serif; background-color:rgba(255,250,235,0.92); border:1px solid rgba(0,0,0,0.25); border-radius:4px; pointer-events:none; z-index:10; }");
+	RB_addStyle(".rbp-restime { position:absolute; top:100%; left:2px; right:2px; margin-top:2px; padding:1px 4px; white-space:nowrap; text-align:center; font:bold 11px/16px sans-serif; color:#fff; background:linear-gradient(#6b5733,#46371b); border:1px solid #2f2512; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.4); pointer-events:none; z-index:10; } " +
+		".rbp-restime span span { margin-left:4px; }");
 	calculationPPH();
 	var mm = RB.Setup[22] > 0 ? normalProductionCalc( sumPPH ) : [0,0];
 	var ssPPH = 0;
@@ -5075,7 +5096,7 @@ function progressbar_init() {
 	var alink2 = $a(' v' + version,[['style','font-size:9px;'],['target','_blank'],['title',gtext("svers")]]);
 	alink2.addEventListener('click', displayWhatIsNew, false);
 
-	// menu icons live next to the game's own top-right buttons (nav#outOfGame), not in the floating panel
+	// menu icons sit in the same row as the game's own top-right buttons (nav#outOfGame), to their right
 	var topBtns = [
 		['Σ','overview',overviewAll,''],
 		['⚙','settings',rbSetup,''],
@@ -5088,15 +5109,15 @@ function progressbar_init() {
 		return btn;
 	});
 	RB_addStyle("#rbp-topmenu { position:fixed; z-index:9999; display:flex; gap:4px; } " +
-		".rbp-tbtn { width:28px; height:28px; box-sizing:border-box; border-radius:50%; border:2px solid #4b3a1a; background:linear-gradient(#93c24e,#4f7d1c); color:#fff; font:bold 14px/24px sans-serif; text-align:center; cursor:pointer; user-select:none; box-shadow:0 1px 3px rgba(0,0,0,0.5); } " +
+		".rbp-tbtn { width:26px; height:26px; box-sizing:border-box; border-radius:50%; border:1px solid #6b5733; background:linear-gradient(#f6f1e6,#cfc4ab); color:#4b3a1a; font:bold 13px/24px sans-serif; text-align:center; cursor:pointer; user-select:none; box-shadow:0 1px 3px rgba(0,0,0,0.45); } " +
 		".rbp-tbtn:hover { filter:brightness(1.2); }");
 	var topMenu = $em('DIV',topBtns,[['id','rbp-topmenu']]);
 	document.body.appendChild(topMenu);
 	function placeTopMenu () {
 		var nav = $g('outOfGame');
 		var r = nav ? nav.getBoundingClientRect() : null;
-		topMenu.style.top = (r && r.width ? r.bottom + 6 : 4) + 'px';
-		topMenu.style.right = (r && r.width ? document.documentElement.clientWidth - r.right : 4) + 'px';
+		topMenu.style.top = (r && r.width ? r.top + r.height/2 - 13 : 4) + 'px';
+		if( r && r.width ) topMenu.style.left = Math.min(r.right + 6, document.documentElement.clientWidth - topMenu.offsetWidth - 4) + 'px'; else topMenu.style.right = '4px';
 	}
 	placeTopMenu();
 	window.addEventListener('resize', placeTopMenu, false);
@@ -9611,9 +9632,11 @@ function displayWhatIsNew () {
 	loadCookie ( 'RBSetup', 'Setup' );
 	RB_addStyle(acss);
 	RB_addStyle(defaultCSSfixes);
-	var rbpBckColor = (RB.Setup[59] == 1) ? dmColors[0] : '#FFFFFF';
+	var rbpBckColor = (RB.Setup[59] == 1) ? dmColors[0] : '#fbf6e8';
 	if ( RB.Setup[59] == 1 ) {
 		RB_addStyle(darkCSS);
+	} else {
+		RB_addStyle(rbpTheme);
 	}
 	if ( RB.Setup[0] != version ) {
 		//displayWhatIsNew();

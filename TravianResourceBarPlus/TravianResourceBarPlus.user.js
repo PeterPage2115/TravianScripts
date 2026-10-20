@@ -8124,7 +8124,9 @@ function analyzerBattle () {
 		".rbp-ba small { display:block; color:#8a7a56; font-size:11px; margin-top:2px; } " +
 		".rbp-ba .rbp-bar { height:6px; background:#e5dcc0; border-radius:3px; margin-top:4px; overflow:hidden; max-width:180px; } " +
 		".rbp-ba .rbp-bar span { display:block; height:100%; background:#7d8a44; } " +
-		".rbp-ba .pos { color:#2e7d32; } .rbp-ba .neg { color:#c62828; }");
+		".rbp-ba .pos { color:#2e7d32; } .rbp-ba .neg { color:#c62828; } " +
+		".rbp-warn { background:#fff3cd; color:#7a5b00; padding:5px 12px; font-size:12px; border-bottom:1px solid #e5dcc0; } " +
+		".rbp-partial .rbp-ba td:nth-child(3), .rbp-partial .rbp-ba tr.rbp-trade td { opacity:0.45; }");
 
 	function num ( n ) { return Math.round(n).toLocaleString('pl-PL'); }
 	function signed ( n ) { return (n > 0 ? '+' : n < 0 ? '−' : '') + num(Math.abs(n)); }
@@ -8180,8 +8182,17 @@ function analyzerBattle () {
 		tradeTxt = k >= 1 ? 'napastnik zniszczył '+k.toFixed(1).replace('.',',')+'× więcej, niż stracił' : 'napastnik stracił '+(1/k).toFixed(1).replace('.',',')+'× więcej, niż zniszczył';
 		tradeTone = k >= 1 ? 'pos' : 'neg';
 	}
-	tbl.appendChild(row($ee('SPAN','⚔',[['style','font-size:16px;']]),'Wymiana strat',[
-		cell([big([trade],tradeTone),$ee('SMALL',tradeTxt+' (straty w surowcach)')],'',2)]));
+	var tradeRow = row($ee('SPAN','⚔',[['style','font-size:16px;']]),'Wymiana strat',[
+		cell([big([trade],tradeTone),$ee('SMALL',tradeTxt+' (straty w surowcach)')],'',2)]);
+	tradeRow.className = 'rbp-trade';
+	tbl.appendChild(tradeRow);
+
+	// troops shown as "?" are not counted, so the defender side is only a lower bound
+	var hidden = Array.prototype.some.call($gt('TD',report), function (c) { return c.textContent.trim() == '?'; });
+	if( hidden ) {
+		newTABLE.className += ' rbp-partial';
+		newTABLE.insertBefore($ee('DIV','⚠ Część wojsk obrońcy jest ukryta („?”) – straty obrońcy i wymiana strat są niepełne (zaniżone).',[['class','rbp-warn']]), tbl);
+	}
 
 	$gc('attacker')[0].parentNode.parentNode.appendChild(newTABLE);
 }

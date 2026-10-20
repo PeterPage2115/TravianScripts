@@ -7483,10 +7483,10 @@ function a2bInfo () {
 	function lbl ( icon, name ) { return $em('TD',[icon,' '+name],[['class','rbp-lbl']]); }
 	rT = $em('TABLE',[
 		$em('TR',[$e('TH'),$em('TH',[trImg('unit u13'),' piechota']),$em('TH',[trImg('unit u16'),' jazda'])]),
-		$em('TR',[lbl(trImg('att_all'),'Atak'),$em('TD',[num(ts[0])]),$em('TD',[num(ts[1])])]),
-		$em('TR',[lbl(trImg('def1'),'Obrona'),$em('TD',[num(ts[2])]),$em('TD',[num(ts[3])])]),
-		$em('TR',[lbl($e('i',[['class','r5']]),'Utrzymanie'),$em('TD',[num(ts[5])],[['colspan','2']])]),
-		$em('TR',[lbl(trImg(allIDs[33]),'Udźwig'),$em('TD',[num(ts[4])],[['colspan','2']])])]);
+		$em('TR',[lbl($e('i',[['class','offence_medium']]),'Atak'),$em('TD',[num(ts[0])]),$em('TD',[num(ts[1])])]),
+		$em('TR',[lbl($e('i',[['class','defence_medium']]),'Obrona'),$em('TD',[num(ts[2])]),$em('TD',[num(ts[3])])]),
+		$em('TR',[lbl($e('i',[['class','r5Big']]),'Utrzymanie'),$em('TD',[num(ts[5])],[['colspan','2']])]),
+		$em('TR',[lbl($e('i',[['class','carry full']]),'Udźwig'),$em('TD',[num(ts[4])],[['colspan','2']])])]);
 	rP.appendChild(rT);
 	if( $g('ok') ) $g('ok').parentNode.insertBefore(rP, $g('ok').nextSibling); // right under the send button, above the wave builder summary
 	else if( $g('raidListSlot') ) insertAfter(rP, $g('raidListSlot'));
@@ -8175,18 +8175,18 @@ function analyzerBattle () {
 	newTABLE.appendChild(tbl);
 
 	// wounded: value that can still be healed
-	tbl.appendChild(row($e('IMG',[['src',img_wounded]]),'Ranni',[
+	tbl.appendChild(row(ic('troopWounded_small'),'Ranni',[
 		cell([big([ic('resources_small'),num(sum4(atS[2]))]),$em('SMALL',[ic('r5'),' '+num(atS[2][6])+' utrzymania'])],resTitle(atS[2])),
 		cell([big([ic('resources_small'),num(sum4(dfS[2]))]),$em('SMALL',[ic('r5'),' '+num(dfS[2][6])+' utrzymania'])],resTitle(dfS[2]))]));
 
 	// plunder
 	var bar = $ee('DIV','<span style="width:'+Math.min(100,carry)+'%"></span>',[['class','rbp-bar']]);
-	tbl.appendChild(row(trImg(allIDs[33]),'Zrabowane',[
+	tbl.appendChild(row(ic('carry full'),'Zrabowane',[
 		cell([big([signed(loot)],tone(loot)),bar,$ee('SMALL','udźwig wykorzystany w '+carry+'%')],'drewno '+num(ress[1])+' · glina '+num(ress[2])+' · żelazo '+num(ress[3])+' · zboże '+num(ress[4])),
 		cell([big([signed(-loot)],tone(-loot))])]));
 
 	// balance: plunder minus value of killed units
-	tbl.appendChild(row(ic('resources_small'),'Bilans surowców',[
+	tbl.appendChild(row(ic('resources_medium'),'Bilans surowców',[
 		cell([big([signed(balA)],tone(balA)),$ee('SMALL','łup '+num(loot)+' − straty '+num(lossA))],'straty: '+resTitle(atS[1])),
 		cell([big([signed(balD)],tone(balD)),$ee('SMALL','straty '+num(lossD)+' + łup '+num(loot))],'straty: '+resTitle(dfS[1]))]));
 
@@ -8201,7 +8201,7 @@ function analyzerBattle () {
 		tradeTxt = k >= 1 ? 'napastnik zniszczył '+k.toFixed(1).replace('.',',')+'× więcej, niż stracił' : 'napastnik stracił '+(1/k).toFixed(1).replace('.',',')+'× więcej, niż zniszczył';
 		tradeTone = k >= 1 ? 'pos' : 'neg';
 	}
-	var tradeRow = row($ee('SPAN','⚔',[['style','font-size:16px;']]),'Wymiana strat',[
+	var tradeRow = row(ic('troopDead_small'),'Wymiana strat',[
 		cell([big([trade],tradeTone),$ee('SMALL',tradeTxt+' (straty w surowcach)')],'',2)]);
 	tradeRow.className = 'rbp-trade';
 	tbl.appendChild(tradeRow);

@@ -353,21 +353,37 @@ function plannedTroops ( i ) {
 function showPresetUnits () {
 	var s = loadPresets()[presetSel.value];
 	presetView.innerHTML = '';
-	if( ! s ) return;
-	var ins = troopInputs(), fit = Infinity;
-	for( var i=1; i<12; i++ ) {
-		var v = parseInt(s.troops['t'+i]);
-		if( !(v > 0) ) continue;
-		// available = the "/ N" next to the input, minus what queued waves already take
-		var inp = ins['t'+i];
-		var free = (inp ? parseInt(inp.parentNode.textContent.split('/').pop().replace(/\D/g,'')) || 0 : 0) - plannedTroops(i);
-		fit = Math.min(fit, Math.floor(Math.max(0,free)/v));
-		$am(presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
+	if( s ) {
+		for( var i=1; i<12; i++ ) {
+			var v = parseInt(s.troops['t'+i]);
+			if( v > 0 ) $am(presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
+		}
+		presetView.appendChild($t(presetView.childNodes.length ? ' x'+(parseInt(multi.value) || 1) : '(empty)'));
 	}
-	if( fit == Infinity ) { presetView.appendChild($t('(empty)')); return; }
-	var want = parseInt(multi.value) || 1;
-	presetView.appendChild($t(' x'+want+' · '));
-	presetView.appendChild($ee('B','wojsko na '+fit+' z '+want+' fal',[['style','color:'+(fit >= want ? 'green' : 'red')+';'],['title','ile fal tego presetu wyślesz z wojska w osadzie (po odjęciu fal już dodanych)']]));
+	showSummary(s);
+}
+
+// totals per unit: what "+" would add (preset x waves), what queued waves take, what the village has, what stays
+function showSummary ( s ) {
+	var ins = troopInputs(), want = parseInt(multi.value) || 1, rows = [];
+	for( var i=1; i<12; i++ ) {
+		var add = s ? (parseInt(s.troops['t'+i]) || 0) * want : 0, queued = plannedTroops(i);
+		if( !add && !queued ) continue;
+		var inp = ins['t'+i];
+		var avail = inp ? parseInt(inp.parentNode.textContent.split('/').pop().replace(/\D/g,'')) || 0 : 0;
+		var left = avail - queued - add;
+		rows.push($em('TR',[$em('TD',[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i))]),
+			$em('TD',[add ? ''+add : '–']), $em('TD',[queued ? ''+queued : '–']), $em('TD',[''+avail]),
+			$em('TD',[''+left],[['class',left < 0 ? 'twb-neg' : 'twb-pos']])]));
+	}
+	summary.innerHTML = '';
+	summary.style.display = rows.length ? '' : 'none';
+	if( !rows.length ) return;
+	var head = [];
+	if( s ) head.push('preset „'+presetSel.value+'” × '+want);
+	if( tbl.tBodies.length ) head.push('w tabeli: '+tbl.tBodies.length+' fal');
+	summary.appendChild($em('DIV',['Wojsko – '+head.join(' · ')],[['class','twb-sum-h']]));
+	summary.appendChild($em('TABLE',[$em('TR',[$e('TH'),$em('TH',['dodasz']),$em('TH',['w tabeli']),$em('TH',['w osadzie']),$em('TH',['zostanie'])])].concat(rows)));
 }
 
 function savePreset () {
@@ -407,7 +423,14 @@ function delPreset () {
 twb_css = "table#twbtable { background-color: transparent; border-collapse: collapse; } " +
 "table#twbtable thead td, table#twbtable tbody td, table#twbtable tfoot td { border: 1px solid silver; } " +
 "table#twbtable a.twb-btn { display:inline-block; min-width:26px; line-height:26px; font-size:20px; font-weight:bold; text-align:center; border-radius:4px; text-decoration:none; } " +
-"table#twbtable a.twb-btn:hover { background-color: rgba(0,0,0,0.1); } "
+"table#twbtable a.twb-btn:hover { background-color: rgba(0,0,0,0.1); } " +
+"#twb_summary { display:inline-block; vertical-align:top; margin:8px 0; border:1px solid #d8c9a3; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } " +
+"#twb_summary .twb-sum-h { background:#7d8a44; color:#fff; font-weight:bold; padding:4px 8px; } " +
+"#twb_summary table { border-collapse:collapse; background:transparent; } " +
+"#twb_summary th, #twb_summary td { padding:3px 8px; text-align:right; border:0; border-bottom:1px solid #e5dcc0; background:transparent; } " +
+"#twb_summary th { font-weight:bold; font-size:11px; color:#6b5a36; } " +
+"#twb_summary tr:last-child td { border-bottom:0; } " +
+"#twb_summary .twb-pos { color:#2e7d32; font-weight:bold; } #twb_summary .twb-neg { color:#c62828; font-weight:bold; } "
 
 var build = $g('build');
 if( ! build ) return;
@@ -467,6 +490,10 @@ tbl.appendChild($ee('TFOOT',$ee('TR',$em('TD',[intervaltxt,interval,unitTimetxt,
 	[['colspan',13],['style','background-color: transparent;text-align:center !important;padding:3px;']]))));
 
 build.appendChild(tbl);
+
+// summary box in the free space under the game's own send button
+var summary = $e('DIV',[['id','twb_summary'],['style','display:none;']]);
+$g('ok').parentNode.insertBefore(summary, $g('ok').nextSibling);
 
 /********** end of main code block ************/
 }

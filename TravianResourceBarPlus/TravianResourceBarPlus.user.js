@@ -2920,6 +2920,17 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"."+allIDs[7]+" {width:auto;border-collapse:collapse; text-align:left; background-color:transparent; margin-bottom:1px;}" +
 	"."+allIDs[7]+" td {background-color:transparent; border:1px solid silver; padding:0px 2px;text-align:right;}" +
 	"."+allIDs[7]+" td img {margin:0px 3px;}" +
+	"table.rbp-tt { border-collapse:separate; border-spacing:0; background:#fbf6e8; border:1px solid #c9b78f; border-radius:6px; overflow:hidden; font-size:12px; color:#3b2f17; margin-bottom:4px; } " +
+	"table.rbp-tt td { padding:3px 8px; border:0; border-bottom:1px solid #e3d6b4; text-align:center; vertical-align:middle; background:transparent; } " +
+	"table.rbp-tt tr:first-child td { background:linear-gradient(#ebdcb4,#d5c18d); font-weight:bold; } " +
+	"table.rbp-tt tr:nth-child(even) td { background:rgba(0,0,0,0.04); } " +
+	"table.rbp-tt tr:last-child td { border-bottom:0; } " +
+	"table.rbp-tt td:nth-last-child(2) { font-weight:bold; } " +
+	"table.rbp-tt td:last-child { color:#7a6a46; } " +
+	"table.rbp-tt td img { margin:0 2px; vertical-align:middle; } " +
+	"#rbp-artsw { display:flex; align-items:center; flex-wrap:wrap; gap:3px; margin:0 0 6px; font-size:11px; color:#3b2f17; } " +
+	"#rbp-artsw span.rbp-artb { padding:1px 7px; border:1px solid #b9a36f; border-radius:10px; background:#fbf6e8; color:#4b3a1a; cursor:pointer; user-select:none; } " +
+	"#rbp-artsw span.rbp-artb.on { background:#6f9a2f; border-color:#4b3a1a; color:#fff; font-weight:bold; } " +
 	"table#"+allIDs[8]+" {min-width:350px;width:auto;border-collapse:collapse; text-align:left;}" +
 	"table#"+allIDs[8]+" tr {border-collapse:collapse; text-align:left;} table#"+allIDs[8]+" tbody tr:hover {background-color:#fce6c4;}" +
 	"table#"+allIDs[8]+" td {overflow:visible;white-space:nowrap;background-color:transparent;padding:0px 5px 1px;}" +
@@ -4585,7 +4596,7 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 	var artefact = art || RB.Setup[3];
 	var shK = shoes || 0;
 	var lhK = leftHand || 0;
-	var newTABLE = $e('TABLE',[['class',allIDs[7]]]);
+	var newTABLE = $e('TABLE',[['class',allIDs[7]+' rbp-tt']]);
 	var serverTime = getServerTime();
 	var tR = vType < 1 ? parseInt(RB.Setup[2]) + 1: 0; //troop race
 
@@ -4659,11 +4670,29 @@ function distanceTooltip(target, tp) {
 	target.addEventListener("mouseout", removeTooltip, false);
 }
 
+function artefactSwitch ( onChange ) {
+	var names = [gtext('none'),'x0.33','x0.5','x0.67','x1.5','x2','x3'];
+	var box = $em('DIV',[$ee('SPAN',gtext("speedart")+':')],[['id','rbp-artsw']]);
+	var btns = names.map(function (n, i) {
+		var b = $ee('SPAN',n,[['class','rbp-artb'+(RB.Setup[3] == i ? ' on' : '')]]);
+		b.addEventListener('click', function () {
+			RB.Setup[3] = i;
+			saveCookie( 'RBSetup', 'Setup' );
+			btns.forEach(function (o, k) { o.className = 'rbp-artb'+(k == i ? ' on' : ''); });
+			onChange();
+		}, false);
+		box.appendChild(b);
+		return b;
+	});
+	return box;
+}
+
 function addShowDistanceIn( ss, vt ) {
 	var newP = $g(allIDs[0]);
 	if( !(newP) ) newP = $e('DIV',[['style','float:'+docDir[1]+';'],['id',allIDs[0]]]);
 	var clear = $e('DIV',[['style','clear:both;']]);
 	ss.parentNode.insertBefore(newP, ss);
+	if( ! $g('rbp-artsw') ) ss.parentNode.insertBefore(artefactSwitch(function() { showDistanceIn( vt ); }), newP);
 	ss.parentNode.appendChild(clear);
 	$gn('x')[0].addEventListener('keyup', function() { showDistanceIn( vt ) }, false);
 	$gn('y')[0].addEventListener('keyup', function() { showDistanceIn( vt ) }, false);
@@ -5136,6 +5165,7 @@ function saveSpaceLeftToMem () {
 
 function distanceToMyVillages() {
 	function updateDistTable () {
+		if( RB.Setup[3] != sel3.value ) { RB.Setup[3] = sel3.value; saveCookie( 'RBSetup', 'Setup' ); }
 		pp1.removeChild(attbl);
 		lastTimerP[0] = lastTimerP[2];
 		attbl = showAllTTime(1, curD, sel.value, sel3.value, shoesT[sel2.value], leftH[sel4.value]);

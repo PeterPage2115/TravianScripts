@@ -5108,16 +5108,18 @@ function progressbar_init() {
 		btn.addEventListener('click', b[2], false);
 		return btn;
 	});
-	RB_addStyle("#rbp-topmenu { position:fixed; z-index:9999; display:flex; gap:4px; } " +
+	RB_addStyle("#rbp-topmenu { position:absolute; z-index:9999; display:flex; gap:4px; } " +
 		".rbp-tbtn { width:26px; height:26px; box-sizing:border-box; border-radius:50%; border:1px solid #6b5733; background:linear-gradient(#f6f1e6,#cfc4ab); color:#4b3a1a; font:bold 13px/24px sans-serif; text-align:center; cursor:pointer; user-select:none; box-shadow:0 1px 3px rgba(0,0,0,0.45); } " +
 		".rbp-tbtn:hover { filter:brightness(1.2); }");
 	var topMenu = $em('DIV',topBtns,[['id','rbp-topmenu']]);
 	document.body.appendChild(topMenu);
 	function placeTopMenu () {
 		var logo = $g('logo');
-		var r = logo ? logo.getBoundingClientRect() : null;
-		topMenu.style.top = (r && r.width ? r.top + r.height/2 - 13 : 4) + 'px';
-		topMenu.style.left = (r && r.width ? r.right + 8 : 4) + 'px';
+		if( !logo || !logo.offsetParent ) { topMenu.style.top = '4px'; topMenu.style.left = '4px'; return; }
+		// same offsetParent as the logo, so the buttons scroll together with the top bar
+		if( topMenu.parentNode != logo.offsetParent ) logo.offsetParent.appendChild(topMenu);
+		topMenu.style.top = (logo.offsetTop + logo.offsetHeight/2 - 13) + 'px';
+		topMenu.style.left = (logo.offsetLeft + logo.offsetWidth + 8) + 'px';
 	}
 	placeTopMenu();
 	window.addEventListener('resize', placeTopMenu, false);

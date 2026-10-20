@@ -2928,7 +2928,7 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"table.rbp-tt td:nth-last-child(2) { font-weight:bold; } " +
 	"table.rbp-tt td:last-child { color:#7a6a46; } " +
 	"table.rbp-tt td img { margin:0 2px; vertical-align:middle; } " +
-	"#rbp-artsw { display:flex; align-items:center; flex-wrap:wrap; gap:3px; margin:0 0 6px; font-size:11px; color:#3b2f17; } " +
+	"#rbp-artsw { display:inline-flex; align-items:center; gap:3px; margin:0 0 0 10px; vertical-align:middle; font-size:11px; color:#3b2f17; } " +
 	"#rbp-artsw span.rbp-artb { padding:1px 7px; border:1px solid #b9a36f; border-radius:10px; background:#fbf6e8; color:#4b3a1a; cursor:pointer; user-select:none; } " +
 	"#rbp-artsw span.rbp-artb.on { background:#6f9a2f; border-color:#4b3a1a; color:#fff; font-weight:bold; } " +
 	"table#"+allIDs[8]+" {min-width:350px;width:auto;border-collapse:collapse; text-align:left;}" +
@@ -4691,14 +4691,15 @@ function distanceTooltip(target, tp) {
 }
 
 function artefactSwitch ( onChange ) {
-	var names = [gtext('none'),'x0.33','x0.5','x0.67','x1.5','x2','x3'];
-	var box = $em('DIV',[$ee('SPAN',gtext("speedart")+':')],[['id','rbp-artsw']]);
-	var btns = names.map(function (n, i) {
-		var b = $ee('SPAN',n,[['class','rbp-artb'+(RB.Setup[3] == i ? ' on' : '')]]);
+	// only the speed artefacts current servers have; values are RB.Setup[3] indexes into getTTime's artSp
+	var opts = [[0,gtext('none')],[4,'x1.5'],[5,'x2']];
+	var box = $em('DIV',[$ee('SPAN','Artefakt:')],[['id','rbp-artsw'],['title',gtext("speedart")]]);
+	var btns = opts.map(function (o) {
+		var b = $ee('SPAN',o[1],[['class','rbp-artb'+(RB.Setup[3] == o[0] ? ' on' : '')]]);
 		b.addEventListener('click', function () {
-			RB.Setup[3] = i;
+			RB.Setup[3] = o[0];
 			saveCookie( 'RBSetup', 'Setup' );
-			btns.forEach(function (o, k) { o.className = 'rbp-artb'+(k == i ? ' on' : ''); });
+			btns.forEach(function (x, k) { x.className = 'rbp-artb'+(opts[k][0] == o[0] ? ' on' : ''); });
 			onChange();
 		}, false);
 		box.appendChild(b);
@@ -4712,7 +4713,7 @@ function addShowDistanceIn( ss, vt ) {
 	if( !(newP) ) newP = $e('DIV',[['style','float:'+docDir[1]+';'],['id',allIDs[0]]]);
 	var clear = $e('DIV',[['style','clear:both;']]);
 	ss.parentNode.insertBefore(newP, ss);
-	if( ! $g('rbp-artsw') ) ss.parentNode.insertBefore(artefactSwitch(function() { showDistanceIn( vt ); }), newP);
+	if( ! $g('rbp-artsw') ) ss.parentNode.insertBefore(artefactSwitch(function() { showDistanceIn( vt ); }), ss.nextSibling); // beside the send button
 	ss.parentNode.appendChild(clear);
 	$gn('x')[0].addEventListener('keyup', function() { showDistanceIn( vt ) }, false);
 	$gn('y')[0].addEventListener('keyup', function() { showDistanceIn( vt ) }, false);
@@ -7488,7 +7489,10 @@ function a2bInfo () {
 		$em('TR',[lbl($e('i',[['class','r5Big']]),'Utrzymanie'),$em('TD',[num(ts[5])],[['colspan','2']])]),
 		$em('TR',[lbl($e('i',[['class','carry full']]),'Udźwig'),$em('TD',[num(ts[4])],[['colspan','2']])])]);
 	rP.appendChild(rT);
-	if( $g('ok') ) $g('ok').parentNode.insertBefore(rP, $g('ok').nextSibling); // right under the send button, above the wave builder summary
+	// right under the send button (and the artefact switch beside it), above the wave builder summary
+	var after = $g('ok');
+	if( after && $g('rbp-artsw') && $g('rbp-artsw').previousSibling == after ) after = $g('rbp-artsw');
+	if( after ) after.parentNode.insertBefore(rP, after.nextSibling);
 	else if( $g('raidListSlot') ) insertAfter(rP, $g('raidListSlot'));
 }
 

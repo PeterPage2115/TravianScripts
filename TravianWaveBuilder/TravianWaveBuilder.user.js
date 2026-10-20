@@ -493,7 +493,8 @@ build.appendChild(tbl);
 
 // summary box in the free space under the game's own send button
 var summary = $e('DIV',[['id','twb_summary'],['style','display:none;']]);
-$g('ok').parentNode.insertBefore(summary, $g('ok').nextSibling);
+var sumAfter = $g('rbp-artsw') && $g('rbp-artsw').previousSibling == $g('ok') ? $g('rbp-artsw') : $g('ok'); // ResourceBar+ artefact switch sits beside the button
+sumAfter.parentNode.insertBefore(summary, sumAfter.nextSibling);
 
 /********** end of main code block ************/
 }

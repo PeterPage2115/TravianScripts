@@ -5096,7 +5096,7 @@ function progressbar_init() {
 	var alink2 = $a(' v' + version,[['style','font-size:9px;'],['target','_blank'],['title',gtext("svers")]]);
 	alink2.addEventListener('click', displayWhatIsNew, false);
 
-	// menu icons sit in the same row as the game's own top-right buttons (nav#outOfGame), to their right
+	// menu icons sit right after the Travian logo (#logo): the only free space in the top bar on small screens
 	var topBtns = [
 		['Σ','overview',overviewAll,''],
 		['⚙','settings',rbSetup,''],
@@ -5114,10 +5114,10 @@ function progressbar_init() {
 	var topMenu = $em('DIV',topBtns,[['id','rbp-topmenu']]);
 	document.body.appendChild(topMenu);
 	function placeTopMenu () {
-		var nav = $g('outOfGame');
-		var r = nav ? nav.getBoundingClientRect() : null;
+		var logo = $g('logo');
+		var r = logo ? logo.getBoundingClientRect() : null;
 		topMenu.style.top = (r && r.width ? r.top + r.height/2 - 13 : 4) + 'px';
-		if( r && r.width ) topMenu.style.left = Math.min(r.right + 6, document.documentElement.clientWidth - topMenu.offsetWidth - 4) + 'px'; else topMenu.style.right = '4px';
+		topMenu.style.left = (r && r.width ? r.right + 8 : 4) + 'px';
 	}
 	placeTopMenu();
 	window.addEventListener('resize', placeTopMenu, false);

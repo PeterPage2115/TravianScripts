@@ -8148,6 +8148,13 @@ function analyzerBattle () {
 	// values in resources: [1] killed, [2] wounded (index 2..5 = wood, clay, iron, crop; 6 = crop upkeep)
 	if( atS[0][1] == 0 ) ress = [0,0,0,0,0];
 	var lossA = sum4(atS[1]), lossD = sum4(dfS[1]);
+	// the game's Statistics (not always present) count hidden "?" troops too: prefer its "resources lost" row
+	var stat = $gc('combatStatistic',report)[0];
+	if( stat ) {
+		var sr = stat.rows[stat.rows.length-1].cells;
+		var gA = parseInt(sr[1].textContent.replace(/\D/g,'')), gD = parseInt(sr[2].textContent.replace(/\D/g,''));
+		if( !isNaN(gA) && !isNaN(gD) ) { lossA = gA; lossD = gD; } else stat = null;
+	}
 	var loot = ress[1]+ress[2]+ress[3]+ress[4];
 	var carry = atS[0][1] > 0 ? Math.round(loot/atS[0][1]*100) : 0;
 	var balA = loot - lossA, balD = -(lossD + loot);
@@ -8188,7 +8195,7 @@ function analyzerBattle () {
 	tbl.appendChild(tradeRow);
 
 	// troops shown as "?" are not counted, so the defender side is only a lower bound
-	var hidden = Array.prototype.some.call($gt('TD',report), function (c) { return c.textContent.trim() == '?'; });
+	var hidden = !stat && Array.prototype.some.call($gt('TD',report), function (c) { return c.textContent.trim() == '?'; });
 	if( hidden ) {
 		newTABLE.className += ' rbp-partial';
 		newTABLE.insertBefore($ee('DIV','⚠ Część wojsk obrońcy jest ukryta („?”) – straty obrońcy i wymiana strat są niepełne (zaniżone).',[['class','rbp-warn']]), tbl);

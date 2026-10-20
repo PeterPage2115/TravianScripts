@@ -119,6 +119,7 @@ function detectLanguage() {
 /********** begin of main code block ************/
 
 function ok () {
+	showPresetUnits();
 	tFormFL = true;
 	plus.textContent = '+';
 	$g('twb_multi').disabled = false;
@@ -253,6 +254,7 @@ function addWave () {
 function remWave () {
 	var tb = this.parentNode.parentNode.parentNode;
 	tb.parentNode.removeChild(tb);
+	showPresetUnits();
 }
 
 function moveWaveUp () {
@@ -341,16 +343,31 @@ function setInputValue (inp, v) {
 	inp.dispatchEvent(new Event('change',{bubbles:true}));
 }
 
+// troops of type t<i> already put into queued waves (row cells 1..11 = t1..t11)
+function plannedTroops ( i ) {
+	var n = 0;
+	for( var b=0; b<tbl.tBodies.length; b++ ) n += parseInt(tbl.tBodies[b].rows[0].cells[i].textContent) || 0;
+	return n;
+}
+
 function showPresetUnits () {
 	var s = loadPresets()[presetSel.value];
 	presetView.innerHTML = '';
 	if( ! s ) return;
+	var ins = troopInputs(), fit = Infinity;
 	for( var i=1; i<12; i++ ) {
 		var v = parseInt(s.troops['t'+i]);
-		if( v > 0 ) $am(presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
+		if( !(v > 0) ) continue;
+		// available = the "/ N" next to the input, minus what queued waves already take
+		var inp = ins['t'+i];
+		var free = (inp ? parseInt(inp.parentNode.textContent.split('/').pop().replace(/\D/g,'')) || 0 : 0) - plannedTroops(i);
+		fit = Math.min(fit, Math.floor(Math.max(0,free)/v));
+		$am(presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
 	}
-	if( ! presetView.childNodes.length ) presetView.appendChild($t('(empty)'));
-	presetView.appendChild($t(' x'+s.multi));
+	if( fit == Infinity ) { presetView.appendChild($t('(empty)')); return; }
+	var want = parseInt(multi.value) || 1;
+	presetView.appendChild($t(' x'+want+' · '));
+	presetView.appendChild($ee('B','wojsko na '+fit+' z '+want+' fal',[['style','color:'+(fit >= want ? 'green' : 'red')+';'],['title','ile fal tego presetu wyślesz z wojska w osadzie (po odjęciu fal już dodanych)']]));
 }
 
 function savePreset () {
@@ -432,6 +449,7 @@ presetSave.addEventListener('click',savePreset,false);
 var presetDel = $a('Delete',[['href','#'],['onclick',jsNone],['title','Delete selected preset']]);
 presetDel.addEventListener('click',delPreset,false);
 var presetView = $e('SPAN',[['style','margin-left:12px;white-space:nowrap;']]);
+multi.addEventListener('input',showPresetUnits,false);
 fillPresetSelect();
 var prow = $ee('TR',$em('TD',['Preset:',presetSel,presetSave,presetDel,presetView],[['colspan',13],['style','background-color: transparent;padding:3px;']]));
 tbl.appendChild($em('THEAD',[prow,hrow]));

@@ -8185,7 +8185,7 @@ function analyzerBattle () {
 	else if( lossA == 0 ) { trade = '1 : ∞'; tradeTxt = 'napastnik nie stracił nic'; tradeTone = 'pos'; }
 	else {
 		var k = lossD/lossA;
-		trade = '1 : '+k.toFixed(1).replace('.',',');
+		trade = k >= 1 ? '1 : '+k.toFixed(1).replace('.',',') : (1/k).toFixed(1).replace('.',',')+' : 1';
 		tradeTxt = k >= 1 ? 'napastnik zniszczył '+k.toFixed(1).replace('.',',')+'× więcej, niż stracił' : 'napastnik stracił '+(1/k).toFixed(1).replace('.',',')+'× więcej, niż zniszczył';
 		tradeTone = k >= 1 ? 'pos' : 'neg';
 	}

@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Travian Resource bar plus
+// @name           Travian Resource bar plus (fork)
 // @namespace      https://github.com/adipiciu/Travian-scripts
 // @description    Shows travian resources (for Travian Legends and Travian Northern Legends)
 // @author         adipiciu (based on Travian Resource bar plus version 2.8.14 by Serj_LV)
@@ -12,14 +12,15 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.16
+// @version        2.26.16-fork.1
+// Fork: PeterPage (based on adipiciu/Travian-scripts 2.26.16)
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.16';
+var version = '2.26.16-fork.1';
 
 notRunYet = false;
 

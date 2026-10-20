@@ -4980,19 +4980,19 @@ function progressbar_updValues() {
 	}
 
 	if( percentUsed < 50 ){
-		changeColor('perreso','#9fd8ff');
+		changeColor('perreso','#1565c0');
 	} else if( parseInt(percentUsed) < 70 ){
-		changeColor('perreso','#ffc266');
+		changeColor('perreso','#e65100');
 	} else if( parseInt(percentUsed) >= 70 ){
-		changeColor('perreso','#ff8a80');
+		changeColor('perreso','#c62828');
 	}
 
 	if( timerRB[j].time < parseFloat(RB.Setup[6])*3600 ){
-		changeColor('resotime','#ff8a80');
+		changeColor('resotime','#c62828');
 	} else if( timerRB[j].time < parseFloat(RB.Setup[5])*3600 ){
-		changeColor('resotime','#e3b3ff');
+		changeColor('resotime','#7b1fa2');
 	} else {
-		changeColor('resotime','#b6f07a');
+		changeColor('resotime','#2e7d32');
 	}
 
 }
@@ -5048,7 +5048,7 @@ function progressbar_ReInit () {
 }
 
 function progressbar_init() {
-	RB_addStyle(".rbp-restime { position:absolute; top:100%; left:2px; right:2px; margin-top:2px; padding:1px 4px; white-space:nowrap; text-align:center; font:bold 11px/16px sans-serif; color:#fff; background:linear-gradient(#6b5733,#46371b); border:1px solid #2f2512; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.4); pointer-events:none; z-index:10; } " +
+	RB_addStyle(".rbp-restime { position:absolute; top:100%; left:2px; right:2px; margin-top:2px; padding:1px 4px; white-space:nowrap; text-align:center; font:bold 11px/16px sans-serif; color:#3b2f17; background:linear-gradient(#fbf6e8,#e9dcb8); border:1px solid #8b6b2f; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.4); pointer-events:none; z-index:10; } " +
 		".rbp-restime span span { margin-left:4px; }");
 	calculationPPH();
 	var mm = RB.Setup[22] > 0 ? normalProductionCalc( sumPPH ) : [0,0];

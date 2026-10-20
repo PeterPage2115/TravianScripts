@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Travian wave builder
+// @name           Travian wave builder (presets)
 // @namespace      https://github.com/adipiciu/Travian-scripts
 // @description    Wave builder for Travian Legends and Travian Shores of War
 // @author         adipiciu (based on Travian wave builder 0.5 by Serj_LV)
@@ -196,13 +196,13 @@ function addWave () {
 		var checkSum = sOnclick.split(';')[1].split('value = \'')[1].split('\'')[0];
 		sParams += "checksum=" + checkSum;
 
-		var remBtn = $a('-',[['href','#'],['title',langStrings[1]],['onclick',jsNone]]);
+		var remBtn = $a('-',[['href','#'],['class','twb-btn'],['title',langStrings[1]],['onclick',jsNone]]);
 		remBtn.addEventListener('click',remWave,false);
 
-		var moveUpBtn = $a('&uarr;',[['href','#'],['title',langStrings[2]],['onclick',jsNone],['style','margin:0 15px;']]);
+		var moveUpBtn = $a('&uarr;',[['href','#'],['class','twb-btn'],['title',langStrings[2]],['onclick',jsNone],['style','margin:0 6px;']]);
 		moveUpBtn.addEventListener('click',moveWaveUp,false);
 
-		var moveDownBtn = $a('&darr;',[['href','#'],['title',langStrings[3]],['onclick',jsNone]]);
+		var moveDownBtn = $a('&darr;',[['href','#'],['class','twb-btn'],['title',langStrings[3]],['onclick',jsNone]]);
 		moveDownBtn.addEventListener('click',moveWaveDown,false);
 
 		var firstCol = $c(remBtn,[['rowspan',2],['style','text-align:center;user-select:none;']]);
@@ -307,8 +307,90 @@ function sendWaves () {
 	}
 }
 
+/********** presets: troops + attack type + wave count, stored per server in localStorage ************/
+
+var presetKey = 'twb_presets';
+
+function loadPresets () {
+	try { return JSON.parse(localStorage.getItem(presetKey)) || {}; } catch(e) { return {}; }
+}
+
+function fillPresetSelect (selected) {
+	var p = loadPresets();
+	presetSel.innerHTML = '';
+	presetSel.appendChild(new Option('-- preset --', ''));
+	for( var n in p ) presetSel.appendChild(new Option(n, n));
+	presetSel.value = selected || '';
+}
+
+// troop inputs keyed 't1'..'t11'; live form uses "troop[t1]" (t11 = hero, only when the hero is home), old one "t1"
+function troopInputs () {
+	var r = {};
+	var ins = $gt('INPUT',tForm);
+	for( var i=0; i<ins.length; i++ ) {
+		var m = ins[i].name.match(/(?:^|\[)t(\d+)\]?$/);
+		if( m && ! r['t'+m[1]] ) r['t'+m[1]] = ins[i];
+	}
+	return r;
+}
+
+// fire input/change so page scripts listening on the troop fields see the new value
+function setInputValue (inp, v) {
+	Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(inp, v);
+	inp.dispatchEvent(new Event('input',{bubbles:true}));
+	inp.dispatchEvent(new Event('change',{bubbles:true}));
+}
+
+function showPresetUnits () {
+	var s = loadPresets()[presetSel.value];
+	presetView.innerHTML = '';
+	if( ! s ) return;
+	for( var i=1; i<12; i++ ) {
+		var v = parseInt(s.troops['t'+i]);
+		if( v > 0 ) $am(presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
+	}
+	if( ! presetView.childNodes.length ) presetView.appendChild($t('(empty)'));
+	presetView.appendChild($t(' x'+s.multi));
+}
+
+function savePreset () {
+	var name = prompt('Preset name', presetSel.value);
+	if( ! name ) return;
+	var troops = {}, ins = troopInputs();
+	for( var t in ins ) troops[t] = ins[t].value;
+	if( ! Object.keys(ins).length ) { alert('Troop inputs not found, preset not saved.'); return; }
+	var ev = tForm.querySelector('input[name="eventType"]:checked');
+	var p = loadPresets();
+	p[name] = {troops: troops, eventType: ev ? ev.value : '', multi: multi.value};
+	localStorage.setItem(presetKey, JSON.stringify(p));
+	fillPresetSelect(name);
+	showPresetUnits();
+}
+
+function applyPreset () {
+	showPresetUnits();
+	var s = loadPresets()[presetSel.value];
+	if( ! s ) return;
+	var ins = troopInputs();
+	for( var t in ins ) setInputValue(ins[t], s.troops[t] || '');
+	var ev = tForm.querySelector('input[name="eventType"][value="'+s.eventType+'"]');
+	if( ev && ! ev.checked ) ev.click();
+	multi.value = s.multi;
+}
+
+function delPreset () {
+	if( ! presetSel.value || ! confirm('Delete preset "'+presetSel.value+'"?') ) return;
+	var p = loadPresets();
+	delete p[presetSel.value];
+	localStorage.setItem(presetKey, JSON.stringify(p));
+	fillPresetSelect();
+	showPresetUnits();
+}
+
 twb_css = "table#twbtable { background-color: transparent; border-collapse: collapse; } " +
-"table#twbtable thead td, table#twbtable tbody td, table#twbtable tfoot td { border: 1px solid silver; } "
+"table#twbtable thead td, table#twbtable tbody td, table#twbtable tfoot td { border: 1px solid silver; } " +
+"table#twbtable a.twb-btn { display:inline-block; min-width:26px; line-height:26px; font-size:20px; font-weight:bold; text-align:center; border-radius:4px; text-decoration:none; } " +
+"table#twbtable a.twb-btn:hover { background-color: rgba(0,0,0,0.1); } "
 
 var build = $g('build');
 if( ! build ) return;
@@ -335,7 +417,7 @@ var fullName = window.location.origin + "/";
 
 // build table header
 var tbl = $e('TABLE',[['id','twbtable']]);
-var plus = $a('+',[['href','#'],['onclick',jsNone],['title',langStrings[0]]]);
+var plus = $a('+',[['href','#'],['onclick',jsNone],['class','twb-btn'],['title',langStrings[0]]]);
 plus.addEventListener('click',addWave,false);
 var multi = $e('INPUT',[['id','twb_multi'],['type','number'],['value',1],['title',langStrings[4]],['min',1],['max',12],['style','width:40px;margin:0 8px;']]);
 var hrow = $ee('TR',$am($e('TD',[['style','white-space:nowrap;']]),[multi,plus]));
@@ -343,7 +425,16 @@ for( var i=1; i<11; i++ ) {
 	hrow.appendChild($c(trImg('unit u'+(nation*10+i))));
 }
 $am(hrow,[$c(trImg('unit uhero')),$c(langStrings[6])]);
-tbl.appendChild($ee('THEAD',hrow));
+var presetSel = $e('SELECT',[['style','margin:0 8px;']]);
+presetSel.addEventListener('change',applyPreset,false);
+var presetSave = $a('Save',[['href','#'],['onclick',jsNone],['title','Save current troops, attack type and wave count as preset'],['style','margin-right:8px;']]);
+presetSave.addEventListener('click',savePreset,false);
+var presetDel = $a('Delete',[['href','#'],['onclick',jsNone],['title','Delete selected preset']]);
+presetDel.addEventListener('click',delPreset,false);
+var presetView = $e('SPAN',[['style','margin-left:12px;white-space:nowrap;']]);
+fillPresetSelect();
+var prow = $ee('TR',$em('TD',['Preset:',presetSel,presetSave,presetDel,presetView],[['colspan',13],['style','background-color: transparent;padding:3px;']]));
+tbl.appendChild($em('THEAD',[prow,hrow]));
 
 var sendBtn = $g('ok').cloneNode(true);
 sendBtn.removeAttribute('name');

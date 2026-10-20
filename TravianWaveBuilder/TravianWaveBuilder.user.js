@@ -425,9 +425,9 @@ twb_css = "table#twbtable { background-color: transparent; border-collapse: coll
 "table#twbtable a.twb-btn { display:inline-block; min-width:26px; line-height:26px; font-size:20px; font-weight:bold; text-align:center; border-radius:4px; text-decoration:none; } " +
 "table#twbtable a.twb-btn:hover { background-color: rgba(0,0,0,0.1); } " +
 "#twb_summary { display:table; min-width:340px; margin:8px 0; border:1px solid #d8c9a3; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } " +
-"#twb_summary .twb-sum-h { background:#7d8a44; color:#fff; font-weight:bold; padding:4px 8px; } " +
+"#twb_summary .twb-sum-h { background:#7d8a44; color:#fff; font-weight:bold; padding:3px 8px; } " +
 "#twb_summary table { width:100%; border-collapse:collapse; background:transparent; margin:0; } " +
-"#twb_summary table th, #twb_summary table td { padding:3px 8px; text-align:right; border:0; border-bottom:1px solid #e5dcc0; background:transparent; } " +
+"#twb_summary table th, #twb_summary table td { padding:1px 8px; text-align:right; border:0; border-bottom:1px solid #e5dcc0; background:transparent; } " +
 "#twb_summary table th { font-weight:bold; font-size:11px; color:#6b5a36; } " +
 "#twb_summary table tr:last-child td { border-bottom:0; } " +
 "#twb_summary .twb-pos { color:#2e7d32; font-weight:bold; } #twb_summary .twb-neg { color:#c62828; font-weight:bold; } "

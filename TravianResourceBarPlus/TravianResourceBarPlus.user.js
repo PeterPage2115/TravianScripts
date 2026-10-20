@@ -8148,24 +8148,7 @@ function analyzerBattle () {
 	var newTABLE = $e('TABLE',[['class','rbp-ba']]);
 	newTABLE.appendChild($ee('THEAD',$em('TR',[$ee('TH',distRef),$ee('TH',attakerN),$ee('TH',defenderN),$ee('TH','Udział napastnika')])));
 
-	// strength: infantry + cavalry, attacker vs defender
-	var proc = [0,0];
-	var strAP = atS[0][0]-atS[3];
-	proc[0] = Math.round(strAP/(strAP+dfS[0][0])*100).NaN0();
-	proc[1] = Math.round(atS[3]/(atS[3]+dfS[0][1])*100).NaN0();
-	newTABLE.appendChild($em('TR',[
-		lbl([trImg('unit u13'),trImg('unit u16')],'Siła bojowa','piechota + jazda'),
-		td([humanRF(strAP)+' + '+humanRF(atS[3])]),
-		td([humanRF(dfS[0][0])+' + '+humanRF(dfS[0][1])]),
-		share(Math.round((proc[0]+proc[1])/(proc[0]>0 && proc[1] > 0 ? 2: 1)),proc[0]+'% piechota · '+proc[1]+'% jazda')]));
-
-	// crop upkeep: sent / killed
-	proc[0] = Math.round(atS[1][6]/(atS[1][6]+dfS[1][6])*100).NaN0();
-	newTABLE.appendChild($em('TR',[
-		lbl([ic('r5')],'Jednostki','zużycie zboża: wysłane / polegli'),
-		td([humanRF(atS[0][6])+' / '+humanRF(atS[1][6])]),
-		td([humanRF(dfS[0][6])+' / '+humanRF(dfS[1][6])]),
-		share(proc[0])]));
+	var proc = [];
 
 	// hospital
 	proc[0] = Math.round(atS[2][6]/(atS[2][6]+dfS[2][6])*100).NaN0();
@@ -8173,7 +8156,7 @@ function analyzerBattle () {
 		lbl([$e('IMG',[['src',img_wounded]])],'Szpital','ranni (zużycie zboża)'),
 		td([humanRF(atS[2][6])]),
 		td([humanRF(dfS[2][6])]),
-		share(proc[0])]));
+		share(proc[0],'część wszystkich rannych')]));
 
 	// resources: value of killed units; defender also loses the plunder
 	proc[0] = atS[1][2]+atS[1][3]+atS[1][4]+atS[1][5];
@@ -8186,7 +8169,7 @@ function analyzerBattle () {
 		lbl([ic('r1'),ic('r2'),ic('r3'),ic('r4')],'Straty w surowcach','wartość poległych jednostek'),
 		resCell([atS[1][2],atS[1][3],atS[1][4],atS[1][5]],proc[0]),
 		resCell([dfS[1][2]+ress[1],dfS[1][3]+ress[2],dfS[1][4]+ress[3],dfS[1][5]+ress[4]],proc[4],'straty obrońcy + zrabowane surowce'),
-		share(proc[2])]));
+		share(proc[2],'część wszystkich strat (z łupem)')]));
 
 	// plunder
 	proc[3] = atS[0][1] > 0 ? Math.round(proc[5]/atS[0][1]*100) : 0;

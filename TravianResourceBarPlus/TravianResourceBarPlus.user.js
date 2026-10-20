@@ -8183,6 +8183,7 @@ function analyzerBattle () {
 	var trade, tradeTxt, tradeTone;
 	if( lossA == 0 && lossD == 0 ) { trade = '–'; tradeTxt = 'nikt nic nie stracił'; tradeTone = ''; }
 	else if( lossA == 0 ) { trade = '1 : ∞'; tradeTxt = 'napastnik nie stracił nic'; tradeTone = 'pos'; }
+	else if( lossD == 0 ) { trade = '–'; tradeTxt = 'napastnik nic nie zniszczył'; tradeTone = 'neg'; }
 	else {
 		var k = lossD/lossA;
 		trade = k >= 1 ? '1 : '+k.toFixed(1).replace('.',',') : (1/k).toFixed(1).replace('.',',')+' : 1';

@@ -364,6 +364,18 @@ function showPresetUnits () {
 }
 
 // totals per unit: what "+" would add (preset x waves), what queued waves take, what the village has, what stays
+// one shared box under the send button, used by both ResourceBar+ and Wave builder; CSS 'order' fixes the section order
+function rallyPanel () {
+	var p = document.getElementById('rally-panel');
+	if( !p ) {
+		var ok = document.getElementById('ok');
+		p = document.createElement('div');
+		p.id = 'rally-panel';
+		ok.parentNode.insertBefore(p, ok.nextSibling);
+	}
+	return p;
+}
+
 function showSummary ( s ) {
 	var ins = troopInputs(), want = parseInt(multi.value) || 1, rows = [];
 	for( var i=1; i<12; i++ ) {
@@ -424,7 +436,8 @@ twb_css = "table#twbtable { background-color: transparent; border-collapse: coll
 "table#twbtable thead td, table#twbtable tbody td, table#twbtable tfoot td { border: 1px solid silver; } " +
 "table#twbtable a.twb-btn { display:inline-block; min-width:26px; line-height:26px; font-size:20px; font-weight:bold; text-align:center; border-radius:4px; text-decoration:none; } " +
 "table#twbtable a.twb-btn:hover { background-color: rgba(0,0,0,0.1); } " +
-"#twb_summary { display:table; min-width:340px; margin:8px 0; border:1px solid #d8c9a3; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } " +
+"#rally-panel { display:flex; flex-direction:column; width:340px; margin:8px 0; border:1px solid #d8c9a3; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } " +
+"#twb_summary { order:3; } " +
 "#twb_summary .twb-sum-h { background:#7d8a44; color:#fff; font-weight:bold; padding:3px 8px; } " +
 "#twb_summary table { width:100%; border-collapse:collapse; background:transparent; margin:0; } " +
 "#twb_summary table th, #twb_summary table td { padding:1px 8px; text-align:right; border:0; border-bottom:1px solid #e5dcc0; background:transparent; } " +
@@ -493,8 +506,7 @@ build.appendChild(tbl);
 
 // summary box in the free space under the game's own send button
 var summary = $e('DIV',[['id','twb_summary'],['style','display:none;']]);
-var sumAfter = $g('rbp-artsw') && $g('rbp-artsw').previousSibling == $g('ok') ? $g('rbp-artsw') : $g('ok'); // ResourceBar+ artefact switch sits beside the button
-sumAfter.parentNode.insertBefore(summary, sumAfter.nextSibling);
+rallyPanel().appendChild(summary);
 
 /********** end of main code block ************/
 }

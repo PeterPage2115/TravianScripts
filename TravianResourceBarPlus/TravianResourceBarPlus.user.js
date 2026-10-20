@@ -2928,7 +2928,8 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"table.rbp-tt td:nth-last-child(2) { font-weight:bold; } " +
 	"table.rbp-tt td:last-child { color:#7a6a46; } " +
 	"table.rbp-tt td img { margin:0 2px; vertical-align:middle; } " +
-	"#rbp-artsw { display:inline-flex; align-items:center; gap:3px; margin:0 0 0 10px; vertical-align:middle; font-size:11px; color:#3b2f17; } " +
+	"#rbp-artsw { display:flex; align-items:center; gap:3px; margin:4px 0; font-size:11px; color:#3b2f17; } " +
+	"#rally-panel { display:flex; flex-direction:column; width:340px; margin:8px 0; border:1px solid #d8c9a3; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } #rally-panel > #rbp-artsw { order:1; margin:0; padding:4px 8px; border-bottom:1px solid #e5dcc0; } " +
 	"#rbp-artsw span.rbp-artb { padding:1px 7px; border:1px solid #b9a36f; border-radius:10px; background:#fbf6e8; color:#4b3a1a; cursor:pointer; user-select:none; } " +
 	"#rbp-artsw span.rbp-artb.on { background:#6f9a2f; border-color:#4b3a1a; color:#fff; font-weight:bold; } " +
 	"table#"+allIDs[8]+" {min-width:350px;width:auto;border-collapse:collapse; text-align:left;}" +
@@ -4690,6 +4691,18 @@ function distanceTooltip(target, tp) {
 	target.addEventListener("mouseout", removeTooltip, false);
 }
 
+// one shared box under the send button, used by both ResourceBar+ and Wave builder; CSS 'order' fixes the section order
+function rallyPanel () {
+	var p = document.getElementById('rally-panel');
+	if( !p ) {
+		var ok = document.getElementById('ok');
+		p = document.createElement('div');
+		p.id = 'rally-panel';
+		ok.parentNode.insertBefore(p, ok.nextSibling);
+	}
+	return p;
+}
+
 function artefactSwitch ( onChange ) {
 	// only the speed artefacts current servers have; values are RB.Setup[3] indexes into getTTime's artSp
 	var opts = [[0,gtext('none')],[4,'x1.5'],[5,'x2']];
@@ -4713,7 +4726,10 @@ function addShowDistanceIn( ss, vt ) {
 	if( !(newP) ) newP = $e('DIV',[['style','float:'+docDir[1]+';'],['id',allIDs[0]]]);
 	var clear = $e('DIV',[['style','clear:both;']]);
 	ss.parentNode.insertBefore(newP, ss);
-	if( ! $g('rbp-artsw') ) ss.parentNode.insertBefore(artefactSwitch(function() { showDistanceIn( vt ); }), ss.nextSibling); // beside the send button
+	if( ! $g('rbp-artsw') ) {
+		var sw = artefactSwitch(function() { showDistanceIn( vt ); });
+		if( ss.id == 'ok' ) rallyPanel().appendChild(sw); else ss.parentNode.insertBefore(sw, ss.nextSibling);
+	}
 	ss.parentNode.appendChild(clear);
 	$gn('x')[0].addEventListener('keyup', function() { showDistanceIn( vt ) }, false);
 	$gn('y')[0].addEventListener('keyup', function() { showDistanceIn( vt ) }, false);
@@ -7473,7 +7489,7 @@ function a2bInfo () {
 	var rP = $g(allIDs[21]);
 	if( rP ) rP.parentNode.removeChild(rP);
 	if( !a2bCss ) { a2bCss = true; RB_addStyle(
-		"#"+allIDs[21]+" {display:table;min-width:340px;margin:8px 0;border:1px solid #d8c9a3;border-radius:6px;overflow:hidden;background:#fdf8ea;font-size:12px;color:#3b2f17;}" +
+		"#"+allIDs[21]+" {order:2;}" +
 		"#"+allIDs[21]+" .rbp-a2b-h {background:#7d8a44;color:#fff;font-weight:bold;padding:3px 8px;}" +
 		"#"+allIDs[21]+" table {width:100%;border-collapse:collapse;background:transparent;margin:0;}" +
 		"#"+allIDs[21]+" table th, #"+allIDs[21]+" table td {padding:1px 8px;text-align:right;border:0;border-bottom:1px solid #e5dcc0;background:transparent;white-space:nowrap;}" +
@@ -7489,10 +7505,7 @@ function a2bInfo () {
 		$em('TR',[lbl($e('i',[['class','r5Big']]),'Utrzymanie'),$em('TD',[num(ts[5])],[['colspan','2']])]),
 		$em('TR',[lbl($e('i',[['class','carry full']]),'Udźwig'),$em('TD',[num(ts[4])],[['colspan','2']])])]);
 	rP.appendChild(rT);
-	// right under the send button (and the artefact switch beside it), above the wave builder summary
-	var after = $g('ok');
-	if( after && $g('rbp-artsw') && $g('rbp-artsw').previousSibling == after ) after = $g('rbp-artsw');
-	if( after ) after.parentNode.insertBefore(rP, after.nextSibling);
+	if( $g('ok') ) rallyPanel().appendChild(rP);
 	else if( $g('raidListSlot') ) insertAfter(rP, $g('raidListSlot'));
 }
 

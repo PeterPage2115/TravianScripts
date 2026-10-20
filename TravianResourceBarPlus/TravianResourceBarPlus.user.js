@@ -4906,14 +4906,18 @@ function progressbar_updValues() {
 
 
 //Start kram89 code heavily modified Serj_LV :)
-if( RB.bodyH[0] == 1 ) {
+{
 	if( timerN.length < 4 ){
 		timerN[j] = new Object();
 		timerN[j].resotime = timerRB[j].val.cloneNode(true);
 		timerN[j].perreso = $e('span');
-		timerN[j].divme1 = $ee('div',$em('span',[timerN[j].resotime,' ',timerN[j].perreso],[['style',"white-space:nowrap;"]]),
-			[['style','position:absolute;top:27px;text-align:center;width:86px;background-color:#fef0ce;border-radius:5px;']]);
-		$g('l'+(j+1)).parentNode.appendChild(timerN[j].divme1);
+		timerN[j].divme1 = $ee('div',$em('span',[timerN[j].resotime,' ',timerN[j].perreso]),[['class','rbp-restime']]);
+	}
+	// (re)attach: the game may re-render the top bar and drop our badge
+	var rHost = ($g('l'+(j+1)) || {}).parentNode;
+	if( rHost && timerN[j].divme1.parentNode != rHost ) {
+		if( getComputedStyle(rHost).position == 'static' ) rHost.style.position = 'relative';
+		rHost.appendChild(timerN[j].divme1);
 	}
 
 	timerN[j].resotime.textContent = formatTime(timerRB[j].time,0);
@@ -4921,7 +4925,7 @@ if( RB.bodyH[0] == 1 ) {
 
 	function changeColor (obj,color) {
 		if( timerN[j][obj+'_color'] != color ) {
-			timerN[j][obj+'_color'] != color;
+			timerN[j][obj+'_color'] = color;
 			timerN[j][obj].setAttribute('style','color:'+color+';');
 		}
 	}
@@ -4942,9 +4946,6 @@ if( RB.bodyH[0] == 1 ) {
 		changeColor('resotime','green');
 	}
 
-} else if( timerN.length != 0 ) {
-	$g('l'+(j+1)).parentNode.removeChild(timerN[j].divme1);
-	if( j == 3 ) timerN.length = 0;
 }
 //end code
 
@@ -4998,6 +4999,7 @@ function progressbar_ReInit () {
 }
 
 function progressbar_init() {
+	RB_addStyle(".rbp-restime { position:absolute; top:100%; left:50%; transform:translateX(-50%); margin-top:2px; padding:1px 6px; white-space:nowrap; text-align:center; font:bold 11px/16px sans-serif; background-color:rgba(255,250,235,0.92); border:1px solid rgba(0,0,0,0.25); border-radius:4px; pointer-events:none; z-index:10; }");
 	calculationPPH();
 	var mm = RB.Setup[22] > 0 ? normalProductionCalc( sumPPH ) : [0,0];
 	var ssPPH = 0;

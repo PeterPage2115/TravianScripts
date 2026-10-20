@@ -8102,7 +8102,7 @@ function analyzerBattle () {
 		var atCoord = getVid(adCoords.snapshotItem(0).getAttribute('href'));
 		var dfCoord = getVid(adCoords.snapshotItem(1).getAttribute('href'));
 		var distance = Math.round(calcDistance(atCoord,dfCoord));
-		var distRef = $ee('SPAN','&harr; '+distance+' pól',[['style','white-space:nowrap;'],['title','Najedź, aby zobaczyć czasy marszu']]);
+		var distRef = $ee('SPAN','&harr; '+distance+' pól · czasy marszu',[['style','white-space:nowrap;'],['title','Najedź, aby zobaczyć czasy marszu']]);
 		distRef.addEventListener("mouseover", function() {
 			var al = parseInt(RB.Setup[9]) == 0 ? parseInt(RB.village_Var[1]) : parseInt(RB.Setup[9]) - 1;
 			makeTooltip(showAllTTime(1, [atCoord,dfCoord], al));
@@ -8110,75 +8110,78 @@ function analyzerBattle () {
 		distRef.addEventListener("mouseout", removeTooltip, false);
 	} else var distRef = ' ';
 
-	RB_addStyle(".rbp-ba { width:100%; margin-top:10px; border-collapse:separate; border-spacing:0; background:#fbf6e8; border:1px solid #c9b78f; border-radius:6px; overflow:hidden; font-size:12px; color:#3b2f17; } " +
-		".rbp-ba th { background:linear-gradient(#ebdcb4,#d5c18d); color:#4b3a1a; padding:6px 8px; font-weight:bold; text-align:center; border-bottom:1px solid #b9a36f; } " +
-		".rbp-ba td { padding:6px 8px; border-bottom:1px solid #e3d6b4; text-align:center; vertical-align:middle; } " +
+	RB_addStyle(".rbp-an { margin-top:10px; border:1px solid #d8c9a3; background:#fdf8ea; font-size:13px; color:#3b2f17; } " +
+		".rbp-an-h { display:flex; justify-content:space-between; align-items:center; background:#7d8a44; color:#fff; padding:8px 12px; font:bold 20px/1.2 sans-serif; text-transform:uppercase; } " +
+		".rbp-an-h span { font-size:12px; font-weight:normal; text-transform:none; cursor:help; } " +
+		"table.rbp-ba { width:100%; border-collapse:collapse; background:transparent; } " +
+		".rbp-ba th, .rbp-ba td { padding:7px 10px; border:0; border-bottom:1px solid #e5dcc0; text-align:left; vertical-align:middle; background:transparent; } " +
+		".rbp-ba th { font-weight:bold; } " +
 		".rbp-ba tr:last-child td { border-bottom:0; } " +
-		".rbp-ba td.rbp-lbl { text-align:left; } " +
-		".rbp-ba td.rbp-lbl small, .rbp-ba td small { display:block; color:#8a7a56; font-size:10px; font-weight:normal; } " +
-		".rbp-ba .rbp-bar { height:5px; background:#e3d6b4; border-radius:3px; margin-top:3px; overflow:hidden; } " +
-		".rbp-ba .rbp-bar span { display:block; height:100%; background:#8b6b2f; } " +
-		".rbp-ba .rbp-res span { display:inline-block; margin:0 6px 2px 0; white-space:nowrap; } " +
-		".rbp-ba .rbp-res b { display:block; } " +
+		".rbp-ba td.rbp-lbl { white-space:nowrap; width:28%; } " +
+		".rbp-ba td.rbp-lbl > * { vertical-align:middle; margin-right:4px; } " +
+		".rbp-ba .rbp-big { font-weight:bold; font-size:14px; } " +
+		".rbp-ba .rbp-big > i { vertical-align:middle; margin-right:4px; } " +
+		".rbp-ba small { display:block; color:#8a7a56; font-size:11px; margin-top:2px; } " +
+		".rbp-ba .rbp-bar { height:6px; background:#e5dcc0; border-radius:3px; margin-top:4px; overflow:hidden; max-width:180px; } " +
+		".rbp-ba .rbp-bar span { display:block; height:100%; background:#7d8a44; } " +
 		".rbp-ba .pos { color:#2e7d32; } .rbp-ba .neg { color:#c62828; }");
 
-	function td ( parts, cls, title ) {
+	function num ( n ) { return Math.round(n).toLocaleString('pl-PL'); }
+	function signed ( n ) { return (n > 0 ? '+' : n < 0 ? '−' : '') + num(Math.abs(n)); }
+	function sum4 ( r ) { return r[2]+r[3]+r[4]+r[5]; }
+	function resTitle ( r ) { return 'drewno '+num(r[2])+' · glina '+num(r[3])+' · żelazo '+num(r[4])+' · zboże '+num(r[5]); }
+	function ic ( cls ) { return $e('i',[['class',cls]]); }
+	function big ( parts, cls ) { return $em('DIV',parts,[['class','rbp-big'+(cls ? ' '+cls : '')]]); }
+	function cell ( parts, title, colspan ) {
 		var t = $em('TD',parts);
-		if( cls ) t.className = cls;
 		if( title ) t.title = title;
+		if( colspan ) t.colSpan = colspan;
 		return t;
 	}
-	function lbl ( icons, name, sub ) {
-		return td([].concat(icons,[' ',$ee('B',name),$ee('SMALL',sub)]),'rbp-lbl');
+	function row ( icon, name, cells ) {
+		return $em('TR',[$em('TD',[icon,$ee('B',name)],[['class','rbp-lbl']])].concat(cells));
 	}
-	function ic ( cls ) { return $e('i',[['class',cls],['style','vertical-align:middle;']]); }
-	function share ( v, detail ) {
-		var c = td([$ee('B',v+'%')]);
-		if( detail ) c.appendChild($ee('SMALL',detail));
-		if( !isNaN(parseInt(v)) ) c.appendChild($ee('DIV','<span style="width:'+Math.max(0,Math.min(100,parseInt(v)))+'%"></span>',[['class','rbp-bar']]));
-		return c;
-	}
-	function resCell ( r, sum, title ) {
-		var box = $e('DIV',[['class','rbp-res']]);
-		for( var k = 0; k < 4; k++ ) box.appendChild($em('SPAN',[ic('r'+(k+1)),' '+humanRF(r[k])]));
-		box.appendChild($ee('B','&Sigma; '+humanRF(sum)));
-		return td([box],'',title);
-	}
+	function tone ( n ) { return n > 0 ? 'pos' : n < 0 ? 'neg' : ''; }
 
-	var newTABLE = $e('TABLE',[['class','rbp-ba']]);
-	newTABLE.appendChild($ee('THEAD',$em('TR',[$ee('TH',distRef),$ee('TH',attakerN),$ee('TH',defenderN),$ee('TH','Udział napastnika')])));
-
-	var proc = [];
-
-	// hospital
-	proc[0] = Math.round(atS[2][6]/(atS[2][6]+dfS[2][6])*100).NaN0();
-	newTABLE.appendChild($em('TR',[
-		lbl([$e('IMG',[['src',img_wounded]])],'Szpital','ranni (zużycie zboża)'),
-		td([humanRF(atS[2][6])]),
-		td([humanRF(dfS[2][6])]),
-		share(proc[0],'część wszystkich rannych')]));
-
-	// resources: value of killed units; defender also loses the plunder
-	proc[0] = atS[1][2]+atS[1][3]+atS[1][4]+atS[1][5];
+	// values in resources: [1] killed, [2] wounded (index 2..5 = wood, clay, iron, crop; 6 = crop upkeep)
 	if( atS[0][1] == 0 ) ress = [0,0,0,0,0];
-	proc[5] = ress[1]+ress[2]+ress[3]+ress[4];
-	proc[1] = dfS[1][2]+dfS[1][3]+dfS[1][4]+dfS[1][5];
-	proc[4] = proc[1]+proc[5];
-	proc[2] = Math.round((proc[0])/(proc[0]+proc[4])*100).NaN0();
-	newTABLE.appendChild($em('TR',[
-		lbl([ic('r1'),ic('r2'),ic('r3'),ic('r4')],'Straty w surowcach','wartość poległych jednostek'),
-		resCell([atS[1][2],atS[1][3],atS[1][4],atS[1][5]],proc[0]),
-		resCell([dfS[1][2]+ress[1],dfS[1][3]+ress[2],dfS[1][4]+ress[3],dfS[1][5]+ress[4]],proc[4],'straty obrońcy + zrabowane surowce'),
-		share(proc[2],'część wszystkich strat (z łupem)')]));
+	var lossA = sum4(atS[1]), lossD = sum4(dfS[1]);
+	var loot = ress[1]+ress[2]+ress[3]+ress[4];
+	var carry = atS[0][1] > 0 ? Math.round(loot/atS[0][1]*100) : 0;
+	var balA = loot - lossA, balD = -(lossD + loot);
+
+	var newTABLE = $em('DIV',[$em('DIV',['Analiza',distRef],[['class','rbp-an-h']])],[['class','rbp-an']]);
+	var tbl = $em('TABLE',[$ee('THEAD',$em('TR',[$e('TH'),$ee('TH','Napastnik'),$ee('TH','Obrońca')]))],[['class','rbp-ba']]);
+	newTABLE.appendChild(tbl);
+
+	// wounded: value that can still be healed
+	tbl.appendChild(row($e('IMG',[['src',img_wounded]]),'Ranni',[
+		cell([big([ic('resources_small'),num(sum4(atS[2]))]),$em('SMALL',[ic('r5'),' '+num(atS[2][6])+' utrzymania'])],resTitle(atS[2])),
+		cell([big([ic('resources_small'),num(sum4(dfS[2]))]),$em('SMALL',[ic('r5'),' '+num(dfS[2][6])+' utrzymania'])],resTitle(dfS[2]))]));
 
 	// plunder
-	proc[3] = atS[0][1] > 0 ? Math.round(proc[5]/atS[0][1]*100) : 0;
-	var net = proc[5] > 0 ? Math.round((proc[5]-proc[0])/proc[5]*100) : null;
-	newTABLE.appendChild($em('TR',[
-		lbl([trImg(allIDs[33])],'Łup','zrabowane surowce'),
-		td([humanRF(proc[5]),$ee('SMALL','udźwig wykorzystany w '+proc[3]+'%')]),
-		td(['–']),
-		td([$ee('B',net === null ? '--' : (net >= 0 ? '+' : '')+net+'%',[['class',net === null ? '' : (net >= 0 ? 'pos' : 'neg')]]),$ee('SMALL','zysk netto')])]));
+	var bar = $ee('DIV','<span style="width:'+Math.min(100,carry)+'%"></span>',[['class','rbp-bar']]);
+	tbl.appendChild(row(trImg(allIDs[33]),'Zrabowane',[
+		cell([big([signed(loot)],tone(loot)),bar,$ee('SMALL','udźwig wykorzystany w '+carry+'%')],'drewno '+num(ress[1])+' · glina '+num(ress[2])+' · żelazo '+num(ress[3])+' · zboże '+num(ress[4])),
+		cell([big([signed(-loot)],tone(-loot))])]));
+
+	// balance: plunder minus value of killed units
+	tbl.appendChild(row(ic('resources_small'),'Bilans surowców',[
+		cell([big([signed(balA)],tone(balA)),$ee('SMALL','łup '+num(loot)+' − straty '+num(lossA))],'straty: '+resTitle(atS[1])),
+		cell([big([signed(balD)],tone(balD)),$ee('SMALL','straty '+num(lossD)+' + łup '+num(loot))],'straty: '+resTitle(dfS[1]))]));
+
+	// trade: defender loss per 1 attacker loss
+	var trade, tradeTxt, tradeTone;
+	if( lossA == 0 && lossD == 0 ) { trade = '–'; tradeTxt = 'nikt nic nie stracił'; tradeTone = ''; }
+	else if( lossA == 0 ) { trade = '1 : ∞'; tradeTxt = 'napastnik nie stracił nic'; tradeTone = 'pos'; }
+	else {
+		var k = lossD/lossA;
+		trade = '1 : '+k.toFixed(1).replace('.',',');
+		tradeTxt = k >= 1 ? 'napastnik zniszczył '+k.toFixed(1).replace('.',',')+'× więcej, niż stracił' : 'napastnik stracił '+(1/k).toFixed(1).replace('.',',')+'× więcej, niż zniszczył';
+		tradeTone = k >= 1 ? 'pos' : 'neg';
+	}
+	tbl.appendChild(row($ee('SPAN','⚔',[['style','font-size:16px;']]),'Wymiana strat',[
+		cell([big([trade],tradeTone),$ee('SMALL',tradeTxt+' (straty w surowcach)')],'',2)]));
 
 	$gc('attacker')[0].parentNode.parentNode.appendChild(newTABLE);
 }

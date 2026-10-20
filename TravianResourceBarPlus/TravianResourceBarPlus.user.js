@@ -5046,22 +5046,37 @@ function progressbar_init() {
 	var alink2 = $a(' v' + version,[['style','font-size:9px;'],['target','_blank'],['title',gtext("svers")]]);
 	alink2.addEventListener('click', displayWhatIsNew, false);
 
-	var aImg = $e('IMG',[['src',img_pref],['title',gtext("settings")],['style','padding:0px 2px;cursor:pointer;vertical-align: middle;']]);
-	aImg.addEventListener('click', rbSetup, false);
-
-	var aImg2 = $e('IMG',[['src',img_notes],['title',gtext("notes")],['style','padding:0px 2px;cursor:pointer;vertical-align: middle;']]);
-	aImg2.addEventListener('click', rbNotes, false);
-
-    var alink3 = $a('[M+]', [['href', jsVoid],['style','font-weight:400;'],['title',gtext("res90")]]);
-    alink3.addEventListener('click', saveSpaceLeftToMem, false);
-
-	var aImg3 = $e('IMG',[['src',img_lightbulb],['title',gtext("eyecomfort")],['style','padding:0px 2px;cursor:pointer;vertical-align: middle;filter: grayscale('+RB.Setup[59]+');']]);
-	aImg3.addEventListener('click', eyeComfort, false);
+	// menu icons live next to the game's own top-right buttons (nav#outOfGame), not in the floating panel
+	var topBtns = [
+		['Σ','overview',overviewAll,''],
+		['⚙','settings',rbSetup,''],
+		['✎','notes',rbNotes,''],
+		['M+','res90',saveSpaceLeftToMem,'font-size:10px;'],
+		['☀','eyecomfort',eyeComfort,RB.Setup[59] == 1 ? 'filter:grayscale(1);' : '']
+	].map(function (b) {
+		var btn = $ee('DIV',b[0],[['class','rbp-tbtn'],['title',gtext(b[1])],['style',b[3]]]);
+		btn.addEventListener('click', b[2], false);
+		return btn;
+	});
+	RB_addStyle("#rbp-topmenu { position:fixed; z-index:9999; display:flex; gap:4px; } " +
+		".rbp-tbtn { width:28px; height:28px; box-sizing:border-box; border-radius:50%; border:2px solid #4b3a1a; background:linear-gradient(#93c24e,#4f7d1c); color:#fff; font:bold 14px/24px sans-serif; text-align:center; cursor:pointer; user-select:none; box-shadow:0 1px 3px rgba(0,0,0,0.5); } " +
+		".rbp-tbtn:hover { filter:brightness(1.2); }");
+	var topMenu = $em('DIV',topBtns,[['id','rbp-topmenu']]);
+	document.body.appendChild(topMenu);
+	function placeTopMenu () {
+		var nav = $g('outOfGame');
+		var r = nav ? nav.getBoundingClientRect() : null;
+		topMenu.style.top = (r && r.width ? r.bottom + 6 : 4) + 'px';
+		topMenu.style.right = (r && r.width ? document.documentElement.clientWidth - r.right : 4) + 'px';
+	}
+	placeTopMenu();
+	window.addEventListener('resize', placeTopMenu, false);
+	setInterval(placeTopMenu, 2000); // the game builds its top bar after load
 
 	var hideP = imgHide(0);
 	hideP.addEventListener('click', function (x) { return function() { bodyHide(x); }}([tblBody,0,hideP]), false);
 
-	var cell = $em('TH',[hideP,alink,alink2,aImg2,aImg3,aImg,alink3]);
+	var cell = $em('TH',[hideP,alink,alink2]);
 
 	var pphSpan = $ee('SPAN','&#931;/h',[['title',ssPPH]]);
 	var tblHead = $ee("thead",$em('TR',[cell,$c(pphSpan,[['class',allIDs[12]]])]));

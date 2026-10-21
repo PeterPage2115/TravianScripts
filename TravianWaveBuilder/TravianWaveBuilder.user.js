@@ -1,18 +1,20 @@
 // ==UserScript==
 // @name           Travian wave builder (presets)
-// @namespace      https://github.com/adipiciu/Travian-scripts
+// @namespace      peterpage-travian-scripts
+// @updateURL      none
+// @downloadURL    none
 // @description    Wave builder for Travian Legends and Travian Shores of War
 // @author         adipiciu (based on Travian wave builder 0.5 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.11
+// @version        2.11.1
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.11';
+var version = '2.11.1';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();

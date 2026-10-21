@@ -8007,8 +8007,8 @@ function npcForTroops () {
 		inps[i].value = sRes[i] + (resNowSumm > newMaxCrop ? resNowSumm-deltaRes*3: newCrop);
 	}
 
+	// the dialog now pre-fills the inputs with the current stock; subtracting them made every count 0
 	var sRes = [0,0,0,0];
-	for( var i=0; i<4; i++ ) sRes[i] = parseInt(inps[i].value).NaN0();
 	var sumSRes = sRes[0]+sRes[1]+sRes[2]+sRes[3];
 	var resNowSumm = resNow[0]+resNow[1]+resNow[2]+resNow[3] - sumSRes;
 
@@ -8016,13 +8016,14 @@ function npcForTroops () {
 		var tN = parseInt(RB.Setup[2])*10+i;
 		var tRS = troopInfo(tN,3)+troopInfo(tN,4)+troopInfo(tN,5)+troopInfo(tN,6);
 		var aCol = Math.floor(resNowSumm/tRS);
-		var newA = $em('A',[trImg('unit u'+tN),'(',aCol,')'],[['href',jsVoid],['onclick','setTimeout(function (x) { return exchangeResources.calculateRest() }, 250);']]);
+		var newA = $em('A',[trImg('unit u'+tN),'(',aCol,')'],[['href',jsVoid],['title','Kliknij: rozkład surowców na '+aCol+' × '+(RB.dictTR[tN] || 'jednostka')],['onclick','setTimeout(function (x) { return exchangeResources.calculateRest() }, 250);']]);
 		newA.addEventListener('click', function(x) { return function() { redistrNPC(x); }}(i), false);
 		TR.appendChild($c(newA));
 	}
-	var newA = $a(($e('i',[['class','r4']])),[['href',jsVoid],['onclick','setTimeout(function (x) { return exchangeResources.calculateRest() },250)']]);
+	var newA = $a(($e('i',[['class','r4']])),[['href',jsVoid],['title','Kliknij: pełny spichlerz, reszta po równo na drewno, glinę i żelazo'],['onclick','setTimeout(function (x) { return exchangeResources.calculateRest() },250)']]);
 	newA.addEventListener('click',redistrNPCcrop, false);
 	TR.appendChild($c(newA));
+	TR.insertBefore($c('Ile wyszkolisz po wymianie (kliknij, by rozdzielić):',[['style','white-space:normal;max-width:130px;font-size:11px;text-align:left;']]), TR.firstChild);
 	var tT = $ee('TABLE',TR,[['class',allIDs[7]]]);
 	npcT.parentNode.insertBefore(tT, npcT);
 }

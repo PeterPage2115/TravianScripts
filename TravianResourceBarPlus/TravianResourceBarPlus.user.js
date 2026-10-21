@@ -2929,7 +2929,7 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"table.rbp-tt td:last-child { color:#7a6a46; } " +
 	"table.rbp-tt td img { margin:0 2px; vertical-align:middle; } " +
 	"#rbp-artsw { display:flex; align-items:center; gap:3px; margin:4px 0; font-size:11px; color:#3b2f17; } " +
-	"#rally-panel { display:flex; flex-direction:column; width:340px; margin:8px 0; border:1px solid #d8c9a3; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } #rally-panel > #rbp-artsw { order:1; margin:0; padding:4px 8px; border-bottom:1px solid #e5dcc0; } " +
+	"#rally-panel { display:grid; grid-template-columns:1fr auto; align-items:start; box-sizing:border-box; width:100%; margin:8px 0; border:1px solid #c9b78f; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } #rally-panel .rbp-sec-h { background:linear-gradient(#ebdcb4,#d5c18d); color:#4b3a1a; font-weight:bold; padding:3px 8px; border-bottom:1px solid #c9b78f; } #rally-panel > #rbp-artsw { grid-column:1; order:1; margin:0; padding:4px 8px; border-bottom:1px solid #e5dcc0; } #rally-panel > #"+allIDs[0]+" { grid-column:2; grid-row:1 / span 3; align-self:stretch; border-left:1px solid #c9b78f; } #rally-panel table.rbp-tt { border:0; border-radius:0; margin:0; } " +
 	"#rbp-artsw span.rbp-artb { padding:1px 7px; border:1px solid #b9a36f; border-radius:10px; background:#fbf6e8; color:#4b3a1a; cursor:pointer; user-select:none; } " +
 	"#rbp-artsw span.rbp-artb.on { background:#6f9a2f; border-color:#4b3a1a; color:#fff; font-weight:bold; } " +
 	"table#"+allIDs[8]+" {min-width:350px;width:auto;border-collapse:collapse; text-align:left;}" +
@@ -4725,7 +4725,7 @@ function addShowDistanceIn( ss, vt ) {
 	var newP = $g(allIDs[0]);
 	if( !(newP) ) newP = $e('DIV',[['style','float:'+docDir[1]+';'],['id',allIDs[0]]]);
 	var clear = $e('DIV',[['style','clear:both;']]);
-	ss.parentNode.insertBefore(newP, ss);
+	if( ss.id == 'ok' ) { newP.style.cssFloat = 'none'; rallyPanel().appendChild(newP); } else ss.parentNode.insertBefore(newP, ss);
 	if( ! $g('rbp-artsw') ) {
 		var sw = artefactSwitch(function() { showDistanceIn( vt ); });
 		if( ss.id == 'ok' ) rallyPanel().appendChild(sw); else ss.parentNode.insertBefore(sw, ss.nextSibling);
@@ -7489,13 +7489,12 @@ function a2bInfo () {
 	var rP = $g(allIDs[21]);
 	if( rP ) rP.parentNode.removeChild(rP);
 	if( !a2bCss ) { a2bCss = true; RB_addStyle(
-		"#"+allIDs[21]+" {order:2;}" +
-		"#"+allIDs[21]+" .rbp-a2b-h {background:#7d8a44;color:#fff;font-weight:bold;padding:3px 8px;}" +
+		"#"+allIDs[21]+" {grid-column:1;order:2;}" +
 		"#"+allIDs[21]+" table {width:100%;border-collapse:collapse;background:transparent;margin:0;}" +
 		"#"+allIDs[21]+" table th, #"+allIDs[21]+" table td {padding:1px 8px;text-align:right;border:0;border-bottom:1px solid #e5dcc0;background:transparent;white-space:nowrap;}" +
 		"#"+allIDs[21]+" table th {font-size:11px;color:#6b5a36;} #"+allIDs[21]+" table td.rbp-lbl {text-align:left;font-weight:bold;}" +
 		"#"+allIDs[21]+" table tr:last-child td {border-bottom:0;} #"+allIDs[21]+" img, #"+allIDs[21]+" i {vertical-align:middle;} #"+allIDs[21]+" td.rbp-lbl i {zoom:0.75;}"); }
-	rP = $em('DIV',[$em('DIV',['Siła wojska'],[['class','rbp-a2b-h']])],[['id',allIDs[21]],['class','rbp-a2b']]);
+	rP = $em('DIV',[$em('DIV',['Siła wojska'],[['class','rbp-sec-h']])],[['id',allIDs[21]],['class','rbp-a2b']]);
 	function num ( v ) { return Math.round(v).toLocaleString('pl-PL'); }
 	function lbl ( icon, name ) { return $em('TD',[icon,' '+name],[['class','rbp-lbl']]); }
 	rT = $em('TABLE',[

@@ -7987,23 +7987,25 @@ function npcForTroops () {
 	var inps = $gt('INPUT', npcT);
 	if( inps.length < 4 ) return;
 
+	// max units of tN after the exchange, with every resource kept within warehouse/granary capacity (fullRes)
+	function npcPlan ( tN ) {
+		var cost = [0,1,2,3].map(function (i) { return troopInfo(tN, i+3); });
+		var count = Math.floor(resNowSumm / (cost[0]+cost[1]+cost[2]+cost[3]));
+		for( var i=0; i<4; i++ ) if( cost[i] > 0 ) count = Math.min(count, Math.floor(fullRes[i] / cost[i]));
+		var vals = cost.map(function (c) { return count * c; });
+		var rest = resNowSumm - (vals[0]+vals[1]+vals[2]+vals[3]);
+		[3,0,1,2].forEach(function (i) { var add = Math.max(0, Math.min(rest, fullRes[i] - vals[i])); vals[i] += add; rest -= add; }); // leftover: crop first
+		return { count: count, vals: vals };
+	}
 	function redistrNPC ( num ) {
-		var tN = parseInt(RB.Setup[2])*10 + num;
-		var tRS = troopInfo(tN,3)+troopInfo(tN,4)+troopInfo(tN,5)+troopInfo(tN,6);
-		var aCol = Math.floor(resNowSumm / tRS);
-		var summ = 0;
-		for( var i=0; i<3; i++ ) {
-			var tCo = aCol * troopInfo(tN, i+3);
-			summ += tCo;
-			inps[i].value = tCo + sRes[i];
-		}
-		inps[i].value = resNowSumm - summ + sRes[i];
+		var plan = npcPlan(parseInt(RB.Setup[2])*10 + num);
+		for( var i=0; i<4; i++ ) inps[i].value = plan.vals[i] + sRes[i];
 	}
 	function redistrNPCcrop () {
 		var newMaxCrop = fullRes[3] - sRes[3];
 		var newCrop = resNowSumm > newMaxCrop ? newMaxCrop: resNowSumm;
 		var deltaRes = resNowSumm > newMaxCrop ? Math.ceil((resNowSumm-newCrop)/3): 0;
-		for( var i=0; i<3; i++ ) inps[i].value = deltaRes + sRes[i];
+		for( var i=0; i<3; i++ ) inps[i].value = Math.min(deltaRes, fullRes[i]) + sRes[i];
 		inps[i].value = sRes[i] + (resNowSumm > newMaxCrop ? resNowSumm-deltaRes*3: newCrop);
 	}
 
@@ -8014,8 +8016,7 @@ function npcForTroops () {
 
 	for( var i=1; i<11; i++ ) {
 		var tN = parseInt(RB.Setup[2])*10+i;
-		var tRS = troopInfo(tN,3)+troopInfo(tN,4)+troopInfo(tN,5)+troopInfo(tN,6);
-		var aCol = Math.floor(resNowSumm/tRS);
+		var aCol = npcPlan(tN).count;
 		var newA = $em('A',[trImg('unit u'+tN),'(',aCol,')'],[['href',jsVoid],['title','Kliknij: rozkład surowców na '+aCol+' × '+(RB.dictTR[tN] || 'jednostka')],['onclick','setTimeout(function (x) { return exchangeResources.calculateRest() }, 250);']]);
 		newA.addEventListener('click', function(x) { return function() { redistrNPC(x); }}(i), false);
 		TR.appendChild($c(newA));
@@ -8023,7 +8024,7 @@ function npcForTroops () {
 	var newA = $a(($e('i',[['class','r4']])),[['href',jsVoid],['title','Kliknij: pełny spichlerz, reszta po równo na drewno, glinę i żelazo'],['onclick','setTimeout(function (x) { return exchangeResources.calculateRest() },250)']]);
 	newA.addEventListener('click',redistrNPCcrop, false);
 	TR.appendChild($c(newA));
-	TR.insertBefore($c('Ile wyszkolisz po wymianie (kliknij, by rozdzielić):',[['style','white-space:normal;max-width:130px;font-size:11px;text-align:left;']]), TR.firstChild);
+	TR.insertBefore($c('Wyszkolisz:',[['style','font-size:11px;white-space:nowrap;'],['title','Ile jednostek wyszkolisz po wymianie (w granicach magazynu i spichlerza). Kliknij ikonę, by wpisać rozkład.']]), TR.firstChild);
 	var tT = $ee('TABLE',TR,[['class',allIDs[7]]]);
 	npcT.parentNode.insertBefore(tT, npcT);
 }

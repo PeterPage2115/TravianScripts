@@ -5370,8 +5370,9 @@ function fillXYtoRP() {
 			}
 			//tt.firstElementChild.appendChild($ee('TR',$c($ee('a','&#x2716;',[['href','#'],['onclick',"jQuery('table#troops').find('input').val(\'\'); return false;"]]),[['colspan',12],['style','text-align:'+docDir[1]+';padding-top: 0px;']])));
 			addShowDistanceIn( ss, 0 );
-			ss.parentNode.addEventListener('keyup', a2bInfo, false);
-			ss.parentNode.addEventListener('click', a2bInfo, false);
+			// the whole form: also catches paste, wheel, preset fill (input/change) and the "/ N" max links
+			var a2bForm = ss.closest('form') || ss.parentNode;
+			['keyup','click','input','change'].forEach(function (ev) { a2bForm.addEventListener(ev, a2bInfo, false); });
 		}
 	}
 }

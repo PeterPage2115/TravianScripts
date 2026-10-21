@@ -436,7 +436,7 @@ twb_css = "table#twbtable { background-color: transparent; border-collapse: coll
 "table#twbtable thead td, table#twbtable tbody td, table#twbtable tfoot td { border: 1px solid silver; } " +
 "table#twbtable a.twb-btn { display:inline-block; min-width:26px; line-height:26px; font-size:20px; font-weight:bold; text-align:center; border-radius:4px; text-decoration:none; } " +
 "table#twbtable a.twb-btn:hover { background-color: rgba(0,0,0,0.1); } " +
-"#rally-panel { display:grid; grid-template-columns:1fr 1fr; align-items:stretch; box-sizing:border-box; width:100%; margin:8px 0; border:1px solid #c9b78f; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } #rally-panel .rbp-sec-h { box-sizing:border-box; height:24px; line-height:17px; background:linear-gradient(#ebdcb4,#d5c18d); color:#4b3a1a; font-weight:bold; padding:3px 8px; border-bottom:1px solid #c9b78f; } " +
+"#rally-panel { display:grid; grid-template-columns:max-content minmax(0,1fr); align-items:stretch; box-sizing:border-box; width:100%; margin:8px 0; border:1px solid #c9b78f; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } #rally-panel .rbp-sec-h { box-sizing:border-box; height:24px; line-height:17px; background:linear-gradient(#ebdcb4,#d5c18d); color:#4b3a1a; font-weight:bold; padding:3px 8px; border-bottom:1px solid #c9b78f; } " +
 "#twb_summary { grid-column:1 / -1; grid-row:3; border-top:1px solid #c9b78f; } " +
 "#twb_summary table { width:100%; border-collapse:collapse; background:transparent; margin:0; } " +
 "#twb_summary table th, #twb_summary table td { padding:1px 8px; text-align:right; border:0; border-bottom:1px solid #e5dcc0; background:transparent; } " +

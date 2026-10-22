@@ -126,7 +126,11 @@ function ok () {
 	plus.textContent = '+';
 	$g('twb_multi').disabled = false;
 	wNr += 1;
-	( wNr < $g('twb_multi').value && wNr < 12 ) ? addWave() : wNr = 0;
+	if( wNr < $g('twb_multi').value && wNr < 12 ) addWave();
+	else {
+		wNr = 0;
+		if( seqQueue.length ) { fillWave(seqQueue.shift()); addWave(); }
+	}
 }
 
 function addWave () {
@@ -166,6 +170,7 @@ function addWave () {
 		var bld = $g('build',rpPage);
 		var err = $gc('error',bld);
 		if( err.length > 0 && err[0].textContent.length > 1 ) {
+			seqQueue = [];
 			ok();
 			alert( err[0].textContent );
 			return;
@@ -176,6 +181,7 @@ function addWave () {
 				if (err[i].hasAttribute("id") && err[i].getAttribute("id")=="l4") {
 				} else {
 					if( ! confirm(err[i].textContent) ) {
+						seqQueue = [];
 						ok();
 						return;
 					}
@@ -249,7 +255,7 @@ function addWave () {
 		nbody.appendChild(nrow);
 		tbl.appendChild(nbody);
 		setTimeout(ok, getRandom(1200));
-		}, function() {setTimeout(ok, getRandom(1200));} 
+		}, function() { seqQueue = []; setTimeout(ok, getRandom(1200)); } 
 	);
 }
 
@@ -352,14 +358,27 @@ function plannedTroops ( i ) {
 	return n;
 }
 
+function unitIcons ( troops ) {
+	for( var i=1; i<12; i++ ) {
+		var v = parseInt(troops['t'+i]);
+		if( v > 0 ) $am(presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
+	}
+}
+
 function showPresetUnits () {
 	var s = loadPresets()[presetSel.value];
 	presetView.innerHTML = '';
-	if( s ) {
-		for( var i=1; i<12; i++ ) {
-			var v = parseInt(s.troops['t'+i]);
-			if( v > 0 ) $am(presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
+	if( s && s.waves ) {
+		// queue preset: identical neighbouring waves collapsed, e.g. "1. ...  2-8. ..."
+		for( var k=0; k<s.waves.length; ) {
+			var j = k;
+			while( j+1 < s.waves.length && JSON.stringify(s.waves[j+1]) == JSON.stringify(s.waves[k]) ) j++;
+			presetView.appendChild($ee('B',(k == j ? (k+1) : (k+1)+'–'+(j+1))+'. ',[['style','margin-left:6px;']]));
+			unitIcons(s.waves[k].troops);
+			k = j+1;
 		}
+	} else if( s ) {
+		unitIcons(s.troops);
 		presetView.appendChild($t(presetView.childNodes.length ? ' x'+(parseInt(multi.value) || 1) : '(empty)'));
 	}
 	showSummary(s);
@@ -381,7 +400,9 @@ function rallyPanel () {
 function showSummary ( s ) {
 	var ins = troopInputs(), want = parseInt(multi.value) || 1, rows = [];
 	for( var i=1; i<12; i++ ) {
-		var add = s ? (parseInt(s.troops['t'+i]) || 0) * want : 0, queued = plannedTroops(i);
+		var add = 0, queued = plannedTroops(i);
+		if( s && s.waves ) s.waves.forEach(function (w) { add += parseInt(w.troops['t'+i]) || 0; });
+		else if( s ) add = (parseInt(s.troops['t'+i]) || 0) * want;
 		if( !add && !queued ) continue;
 		var inp = ins['t'+i];
 		var avail = inp ? parseInt(inp.parentNode.textContent.split('/').pop().replace(/\D/g,'')) || 0 : 0;
@@ -394,7 +415,7 @@ function showSummary ( s ) {
 	summary.style.display = rows.length ? '' : 'none';
 	if( !rows.length ) return;
 	var head = [];
-	if( s ) head.push('preset „'+presetSel.value+'” × '+want);
+	if( s ) head.push(s.waves ? 'kolejka „'+presetSel.value+'” ('+s.waves.length+' fal)' : 'preset „'+presetSel.value+'” × '+want);
 	if( tbl.tBodies.length ) head.push('w tabeli: '+tbl.tBodies.length+' fal');
 	summary.appendChild($em('DIV',['Wojsko – '+head.join(' · ')],[['class','rbp-sec-h']]));
 	summary.appendChild($em('TABLE',[$em('TR',[$e('TH'),$em('TH',['dodasz']),$em('TH',['w tabeli']),$em('TH',['w osadzie']),$em('TH',['zostanie'])])].concat(rows)));
@@ -414,15 +435,50 @@ function savePreset () {
 	showPresetUnits();
 }
 
-function applyPreset () {
-	showPresetUnits();
-	var s = loadPresets()[presetSel.value];
-	if( ! s ) return;
+function fillWave ( w ) {
 	var ins = troopInputs();
-	for( var t in ins ) setInputValue(ins[t], s.troops[t] || '');
-	var ev = tForm.querySelector('input[name="eventType"][value="'+s.eventType+'"]');
+	for( var t in ins ) setInputValue(ins[t], w.troops[t] || '');
+	var ev = tForm.querySelector('input[name="eventType"][value="'+w.eventType+'"]');
 	if( ev && ! ev.checked ) ev.click();
-	multi.value = s.multi;
+}
+
+function applyPreset () {
+	var s = loadPresets()[presetSel.value];
+	if( s ) {
+		fillWave(s.waves ? s.waves[0] : s);
+		multi.value = s.waves ? 1 : s.multi;
+	}
+	showPresetUnits();
+}
+
+// saves the current wave table (troops + attack type of every wave, in order) as a queue preset
+function saveQueue () {
+	if( ! tbl.tBodies.length ) { alert('Tabela fal jest pusta – najpierw dodaj fale.'); return; }
+	var name = prompt('Nazwa kolejki fal', presetSel.value);
+	if( ! name ) return;
+	var waves = [];
+	for( var b=0; b<tbl.tBodies.length; b++ ) {
+		var body = tbl.tBodies[b], troops = {};
+		for( var i=1; i<12; i++ ) troops['t'+i] = ''+(parseInt(body.rows[0].cells[i].textContent) || '');
+		var ev = $gt('INPUT',body)[0].value.match(/(?:^|&)eventType=(\d+)/);
+		waves.push({troops: troops, eventType: ev ? ev[1] : ''});
+	}
+	var p = loadPresets();
+	p[name] = {waves: waves};
+	localStorage.setItem(presetKey, JSON.stringify(p));
+	fillPresetSelect(name);
+	showPresetUnits();
+}
+
+// "+": a queue preset adds all its waves in order (one copy each), otherwise the usual multi copies
+function plusClick () {
+	var s = loadPresets()[presetSel.value];
+	if( tFormFL && s && s.waves ) {
+		multi.value = 1;
+		fillWave(s.waves[0]);
+		seqQueue = s.waves.slice(1);
+	}
+	addWave();
 }
 
 function delPreset () {
@@ -463,6 +519,7 @@ RB_addStyle(twb_css);
 var a2bURL = "build.php?gid=16&tt=2";
 var wCount = 0;
 var wNr = 0;
+var seqQueue = [];
 var wlog = '';
 var cLog;
 var tForm = snd[0];
@@ -472,7 +529,7 @@ var fullName = window.location.origin + "/";
 // build table header
 var tbl = $e('TABLE',[['id','twbtable']]);
 var plus = $a('+',[['href','#'],['onclick',jsNone],['class','twb-btn'],['title',langStrings[0]]]);
-plus.addEventListener('click',addWave,false);
+plus.addEventListener('click',plusClick,false);
 var multi = $e('INPUT',[['id','twb_multi'],['type','number'],['value',1],['title',langStrings[4]],['min',1],['max',12],['style','width:40px;margin:0 8px;']]);
 var hrow = $ee('TR',$am($e('TD',[['style','white-space:nowrap;']]),[multi,plus]));
 for( var i=1; i<11; i++ ) {
@@ -483,12 +540,14 @@ var presetSel = $e('SELECT',[['style','margin:0 8px;']]);
 presetSel.addEventListener('change',applyPreset,false);
 var presetSave = $a('Save',[['href','#'],['onclick',jsNone],['title','Save current troops, attack type and wave count as preset'],['style','margin-right:8px;']]);
 presetSave.addEventListener('click',savePreset,false);
+var queueSave = $a('Zapisz kolejkę',[['href','#'],['onclick',jsNone],['title','Zapisz wszystkie fale z tabeli (w tej kolejności) jako preset-kolejkę'],['style','margin-right:8px;']]);
+queueSave.addEventListener('click',saveQueue,false);
 var presetDel = $a('Delete',[['href','#'],['onclick',jsNone],['title','Delete selected preset']]);
 presetDel.addEventListener('click',delPreset,false);
 var presetView = $e('SPAN',[['style','margin-left:12px;white-space:nowrap;']]);
 multi.addEventListener('input',showPresetUnits,false);
 fillPresetSelect();
-var prow = $ee('TR',$em('TD',['Preset:',presetSel,presetSave,presetDel,presetView],[['colspan',13],['style','background-color: transparent;padding:3px;']]));
+var prow = $ee('TR',$em('TD',['Preset:',presetSel,presetSave,queueSave,presetDel,presetView],[['colspan',13],['style','background-color: transparent;padding:3px;']]));
 tbl.appendChild($em('THEAD',[prow,hrow]));
 
 var sendBtn = $g('ok').cloneNode(true);

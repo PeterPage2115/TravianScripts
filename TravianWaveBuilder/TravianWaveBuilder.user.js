@@ -358,10 +358,10 @@ function plannedTroops ( i ) {
 	return n;
 }
 
-function unitIcons ( troops ) {
+function unitIcons ( troops, el ) {
 	for( var i=1; i<12; i++ ) {
 		var v = parseInt(troops['t'+i]);
-		if( v > 0 ) $am(presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
+		if( v > 0 ) $am(el || presetView,[trImg(i == 11 ? 'unit uhero' : 'unit u'+(nation*10+i)),' '+v+'  ']);
 	}
 }
 
@@ -373,8 +373,10 @@ function showPresetUnits () {
 		for( var k=0; k<s.waves.length; ) {
 			var j = k;
 			while( j+1 < s.waves.length && JSON.stringify(s.waves[j+1]) == JSON.stringify(s.waves[k]) ) j++;
-			presetView.appendChild($ee('B',(k == j ? (k+1) : (k+1)+'–'+(j+1))+'. ',[['style','margin-left:6px;']]));
-			unitIcons(s.waves[k].troops);
+			var g = $e('SPAN',[['style','white-space:nowrap;margin-right:10px;']]);
+			presetView.appendChild(g);
+			g.appendChild($ee('B',(k == j ? (k+1) : (k+1)+'–'+(j+1))+'. ',[['style','margin-left:6px;']]));
+			unitIcons(s.waves[k].troops, g);
 			k = j+1;
 		}
 	} else if( s ) {
@@ -494,6 +496,7 @@ twb_css = "table#twbtable { background-color: transparent; border-collapse: coll
 "table#twbtable thead td, table#twbtable tbody td, table#twbtable tfoot td { border: 1px solid silver; } " +
 "table#twbtable a.twb-btn { display:inline-block; min-width:26px; line-height:26px; font-size:20px; font-weight:bold; text-align:center; border-radius:4px; text-decoration:none; } " +
 "table#twbtable a.twb-btn:hover { background-color: rgba(0,0,0,0.1); } " +
+"table#twbtable thead a { white-space:nowrap; } " +
 "#rally-panel { display:grid; grid-template-columns:max-content minmax(0,1fr); align-items:stretch; box-sizing:border-box; width:100%; margin:8px 0; border:1px solid #c9b78f; border-radius:6px; overflow:hidden; background:#fdf8ea; font-size:12px; color:#3b2f17; } #rally-panel .rbp-sec-h { box-sizing:border-box; height:24px; line-height:17px; background:linear-gradient(#ebdcb4,#d5c18d); color:#4b3a1a; font-weight:bold; padding:3px 8px; border-bottom:1px solid #c9b78f; } " +
 "#twb_summary { grid-column:1 / -1; grid-row:3; border-top:1px solid #c9b78f; } " +
 "#twb_summary table { width:100%; border-collapse:collapse; background:transparent; margin:0; } " +
@@ -544,7 +547,7 @@ var queueSave = $a('Zapisz kolejkę',[['href','#'],['onclick',jsNone],['title','
 queueSave.addEventListener('click',saveQueue,false);
 var presetDel = $a('Delete',[['href','#'],['onclick',jsNone],['title','Delete selected preset']]);
 presetDel.addEventListener('click',delPreset,false);
-var presetView = $e('SPAN',[['style','margin-left:12px;white-space:nowrap;']]);
+var presetView = $e('DIV',[['style','margin-top:4px;line-height:20px;']]);
 multi.addEventListener('input',showPresetUnits,false);
 fillPresetSelect();
 var prow = $ee('TR',$em('TD',['Preset:',presetSel,presetSave,queueSave,presetDel,presetView],[['colspan',13],['style','background-color: transparent;padding:3px;']]));

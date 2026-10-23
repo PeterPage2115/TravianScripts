@@ -10,7 +10,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
@@ -821,9 +821,11 @@ test('client stop: aborts in-flight requests, halts the queue and blocks new loo
 // Todo 4: locale-scoped event discovery and coordinate extraction.
 // ---------------------------------------------------------------------------
 
-const NEWS_PAGE_HTML = readFileSync(path.resolve(HERE, '..', 'news.html'), 'utf8');
+// news.html is a capture from a live account and is not published; this one test needs it
+const NEWS_PAGE_PATH = path.resolve(HERE, '..', 'news.html');
+const NEWS_PAGE_HTML = existsSync(NEWS_PAGE_PATH) ? readFileSync(NEWS_PAGE_PATH, 'utf8') : null;
 
-test('discovery sidebar: news.html yields exactly the three real founding events in document order', () => {
+test('discovery sidebar: news.html yields exactly the three real founding events in document order', { skip: NEWS_PAGE_HTML === null && 'needs the private news.html capture' }, () => {
   const { api, document } = loadUserscriptTestApi(NEWS_PAGE_HTML);
   assert.ok(Object.isFrozen(api), '__TRN_TEST_API__ must stay frozen');
   assert.deepEqual(plainValue(api.EVENT_WORDINGS), {

@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         Travian - zboże oddziałów
 // @namespace    peterpage-travian-scripts
-// @version      1.12
+// @author       PeterPage
+// @version      1.0.0
 // @homepageURL  https://github.com/PeterPage2115/TravianScripts
 // @supportURL   https://github.com/PeterPage2115/TravianScripts/issues
 // @updateURL    https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianCropCounter/incoming-crop.user.js

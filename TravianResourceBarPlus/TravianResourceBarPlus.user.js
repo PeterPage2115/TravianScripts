@@ -6,7 +6,7 @@
 // @updateURL      https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js
 // @downloadURL    https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js
 // @description    Fork of adipiciu's Travian Resource bar plus: resource timers under the stock bar, new look, battle analyzer, speed tables
-// @author         adipiciu (based on Travian Resource bar plus version 2.8.14 by Serj_LV)
+// @author         PeterPage (fork of Travian Resource bar plus 2.26.16 by adipiciu, based on 2.8.14 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR
 // @include        *://*.travian.*
@@ -16,15 +16,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.16.2
-// Fork: PeterPage (based on adipiciu/Travian-scripts 2.26.16)
+// @version        1.0.0
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.16.2';
+var version = '1.0.0';
 
 notRunYet = false;
 
@@ -9646,7 +9645,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - July 31, 2026:</p> <ul><li>Added more servers with rebalanced troops</li></ul> <p>Version 2.26.15 - July 31, 2026:</p> <ul><li>Fixed the memory function not subtracting the resources already sent in the marketplace</li></ul> <p>Version 2.26.14 - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
+		content.innerHTML = "<p><b>Travian Resource Bar+ (fork) "+version+"</b></p><p>Fork by PeterPage of Travian Resource Bar+ 2.26.16 by adipiciu (based on the work of Serj_LV).</p><p>Changes: <a href='"+homepageurl+"/commits/main' target='_blank'>"+homepageurl+"</a></p>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);

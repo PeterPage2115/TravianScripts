@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         Travian Region News (cw.x2)
 // @namespace    travian-region-news
-// @version      0.1.0
+// @author       PeterPage
+// @version      1.0.0
 // @description  Pokazuje nazwę regionu przy wydarzeniach sojuszu w Travian (świat cw.x2). Bez usług zewnętrznych.
 // @match        https://cw.x2.international.travian.com/*
 // @run-at       document-idle

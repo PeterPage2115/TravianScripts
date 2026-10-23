@@ -1,0 +1,17 @@
+#!/bin/sh
+# Refuse a commit that changes a userscript without raising its @version:
+# Tampermonkey only offers an update when the version goes up.
+fail=0
+for f in $(git diff --cached --name-only --diff-filter=M -- '*.user.js'); do
+	old=$(git show "HEAD:$f" | grep -m1 '// @version' | tr -d '\r' | awk '{print $3}')
+	new=$(git show ":$f" | grep -m1 '// @version' | tr -d '\r' | awk '{print $3}')
+	top=$(printf '%s\n%s\n' "$old" "$new" | sort -V | tail -n1)
+	if [ "$old" = "$new" ] || [ "$top" != "$new" ]; then
+		echo "pre-commit: $f changed, but @version $old -> $new is not higher"
+		fail=1
+	fi
+done
+if [ "$fail" = 1 ]; then
+	echo "Raise @version, or use 'git commit --no-verify' if this change must not reach users."
+	exit 1
+fi

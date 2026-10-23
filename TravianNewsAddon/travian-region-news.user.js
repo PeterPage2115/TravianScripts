@@ -1,9 +1,10 @@
 // ==UserScript==
-// @name         Travian Region News (cw.x2)
-// @namespace    travian-region-news
+// @name         Travian Region News
+// @namespace    peterpage-travian-scripts
 // @author       PeterPage
+// @license      GPL-3.0-or-later
 // @version      1.0.0
-// @description  Pokazuje nazwę regionu przy wydarzeniach sojuszu w Travian (świat cw.x2). Bez usług zewnętrznych.
+// @description  Shows the region name next to alliance events in Travian (cw.x2 world). No external services.
 // @match        https://cw.x2.international.travian.com/*
 // @run-at       document-idle
 // @noframes

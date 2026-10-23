@@ -2,6 +2,7 @@
   "name": "travian-region-news-userscript",
   "version": "1.0.0",
   "private": true,
+  "license": "GPL-3.0-or-later",
   "description": "Deterministic test/fixture scaffold for the Travian region-news Tampermonkey userscript (no runtime dependencies).",
   "type": "module",
   "engines": {

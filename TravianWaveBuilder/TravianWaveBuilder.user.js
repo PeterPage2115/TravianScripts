@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Travian wave builder (presets)
+// @name           Travian Wave Builder
 // @namespace      peterpage-travian-scripts
 // @homepageURL    https://github.com/PeterPage2115/TravianScripts
 // @supportURL     https://github.com/PeterPage2115/TravianScripts/issues
@@ -7,8 +7,7 @@
 // @downloadURL    https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianWaveBuilder/TravianWaveBuilder.user.js
 // @description    Fork of adipiciu's Travian wave builder: troop presets, wave queues and a troop summary
 // @author         PeterPage (fork of Travian wave builder 2.11 by adipiciu, based on 0.5 by Serj_LV)
-// @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
-// @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
+// @license        GPL-3.0-or-later
 // @match          https://*.travian.com/build.php*
 
 // @version        1.0.0

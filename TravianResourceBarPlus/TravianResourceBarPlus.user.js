@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Travian Resource bar plus (fork)
+// @name           Travian Resource Bar+
 // @namespace      peterpage-travian-scripts
 // @homepageURL    https://github.com/PeterPage2115/TravianScripts
 // @supportURL     https://github.com/PeterPage2115/TravianScripts/issues
@@ -7,8 +7,7 @@
 // @downloadURL    https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js
 // @description    Fork of adipiciu's Travian Resource bar plus: resource timers under the stock bar, new look, battle analyzer, speed tables
 // @author         PeterPage (fork of Travian Resource bar plus 2.26.16 by adipiciu, based on 2.8.14 by Serj_LV)
-// @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
-// @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR
+// @license        GPL-3.0-or-later
 // @include        *://*.travian.*
 // @include        *://*/*.travian.*
 // @exclude     *://support.travian.*
@@ -9642,13 +9641,11 @@ function displayWhatIsNew () {
 		var footerline = $e('div',[['style','display:table-row;']]);
 		var homepage = $ee('div',$a('Homepage',[['href',homepageurl],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:'+docDir[0]+';']]);
 		var updateBtn = $ee('div',$a('Check for Update',[['href',scripturl],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:'+docDir[1]+';']]);
-		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
 		content.innerHTML = "<p><b>Travian Resource Bar+ (fork) "+version+"</b></p><p>Fork by PeterPage of Travian Resource Bar+ 2.26.16 by adipiciu (based on the work of Serj_LV).</p><p>Changes: <a href='"+homepageurl+"/commits/main' target='_blank'>"+homepageurl+"</a></p>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
-		footerline.appendChild(donate);
 		footerline.appendChild(updateBtn);
 		box.appendChild(closeb);
 		box.appendChild(header);

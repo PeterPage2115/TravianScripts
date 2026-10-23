@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRN offline harness — wydarzenia sojuszu (oba widoki)</title>
+<!--
+  Offline, credential-free visual/functional harness for later todos (5 and 8).
+  It renders BOTH alliance-event views without ever touching the live game:
+
+    1. Sidebar alliance feed  (#sidebarBoxAlliance) — structure adapted from
+       news.html:605-715, including the three real founding events at
+       (89,-97), (-139,-27) and (-127,-53).
+    2. Full "Wydarzenia w sojuszu" table (#allianceEvents) — the representative
+       table from tests/fixtures/alliance-events-full.html.
+
+  Sanitization: actor display names and profile ids are synthetic, the alliance
+  name is replaced with "Sojusz Testowy", and bidi controls from the saved page
+  are normalized to ASCII. No cookies, tokens, session data, HAR headers or
+  credentials are present; the userscript is injected by browser QA at runtime.
+  The entire page is self-contained (no external requests, no external fonts).
+-->
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 16px;
+    background: #f3ecdc;
+    color: #3b2c19;
+    font: 11px/1.45 Verdana, Arial, Helvetica, sans-serif;
+  }
+  h1 { margin: 0 0 6px; font-size: 15px; }
+  .harnessNote { margin: 0 0 14px; color: #6b5a38; }
+  .harnessGrid { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  a { color: #5d7d1d; text-decoration: none; }
+  a:hover, a:focus { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid #8a6d2f; outline-offset: 1px; }
+
+  /* ---- View 1: Travian-like sidebar box (adapted from news.html:605-715) ---- */
+  #sidebarBoxAlliance { width: 232px; border: 1px solid #c9b489; background: #f9f4e3; border-radius: 3px; }
+  #sidebarBoxAlliance .header { padding: 3px 5px; background: #e9ddbe; border-bottom: 1px solid #c9b489; }
+  #sidebarBoxAlliance .buttonsWrapper { display: flex; gap: 4px; }
+  #sidebarBoxAlliance .layoutButton { padding: 1px 4px; border: 1px solid #c9b489; border-radius: 3px; background: #f6eeda; }
+  #sidebarBoxAlliance .content { padding: 6px 8px 8px; }
+  #sidebarBoxAlliance .boxTitle .name { margin-bottom: 6px; font-weight: bold; }
+  #sidebarBoxAlliance ul { margin: 0; padding: 0; list-style: none; }
+  #sidebarBoxAlliance li { margin: 0 0 3px; line-height: 1.5; }
+  #sidebarBoxAlliance .toggle { padding: 2px 6px; border-top: 1px solid #e2d5b5; text-align: center; }
+  #sidebarBoxAlliance .toggleBox { width: 100%; border: 0; background: none; color: #7a6a45; cursor: pointer; }
+
+  /* ---- View 2: Travian-like "Wydarzenia w sojuszu" table ---- */
+  #allianceEvents { flex: 1 1 460px; max-width: 760px; padding: 8px; border: 1px solid #c9b489; background: #f9f4e3; border-radius: 3px; }
+  #allianceEvents h2 { margin: 0 0 6px; font-size: 12px; }
+  #allianceEvents table { width: 100%; border-collapse: collapse; }
+  #allianceEvents th { padding: 3px 6px; border: 1px solid #d8c9a5; background: #e9ddbe; text-align: left; }
+  #allianceEvents td { padding: 3px 6px; border: 1px solid #e2d5b5; vertical-align: top; }
+</style>
+</head>
+<body>
+<h1>Region-news userscript — offline harness (both alliance-event views)</h1>
+<p class="harnessNote">
+  Checklista QA: etykiety regionów wstawiane po natywnych linkach współrzędnych, bez zmiany oryginalnych linków,
+  bez duplikatów po dynamicznym zastąpieniu listy i z zachowaniem natywnej typografii.
+</p>
+<div class="harnessGrid">
+
+  <!-- ================= View 1: sidebar alliance feed ================= -->
+  <div id="sidebarBoxAlliance" class="sidebarBox toggleable expanded">
+    <div class="header">
+      <div class="buttonsWrapper">
+        <a class="layoutButton buttonFramed withIcon round alliance green" title="Strona sojuszu" href="/alliance">Sojusz</a>
+        <a class="layoutButton buttonFramed withIcon round forum green" title="Forum sojuszu" href="/alliance/forum">Forum</a>
+      </div>
+    </div>
+    <div class="content">
+      <div class="boxTitle withBanner">
+        <div class="name">Sojusz Testowy</div>
+      </div>
+      <ul>
+        <li>dziś, 04:46 <a href="/profile/101">Gracz1</a> założył(a) nową osadę w miejscu <a class="mapCoords" href="/karte.php?x=89&amp;y=-97"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(89</span><span class="coordinatePipe">|</span><span class="coordinateY">-97)</span></span></a>.</li>
+        <li>dziś, 04:02 <a href="/profile/202">Gracz2</a> założył(a) nową osadę w miejscu <a class="mapCoords" href="/karte.php?x=-139&amp;y=-27"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(-139</span><span class="coordinatePipe">|</span><span class="coordinateY">-27)</span></span></a>.</li>
+        <li>dziś, 02:41 <a href="/profile/303">Gracz3</a> założył(a) nową osadę w miejscu <a class="mapCoords" href="/karte.php?x=-127&amp;y=-53"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(-127</span><span class="coordinatePipe">|</span><span class="coordinateY">-53)</span></span></a>.</li>
+      </ul>
+    </div>
+    <div class="toggle">
+      <button type="button" class="toggleBox" title="Zamknij okienko">&#9650;</button>
+    </div>
+  </div>
+
+  <!-- ============ View 2: full "Wydarzenia w sojuszu" table ============ -->
+  <div id="allianceEvents" class="eventsWrapper">
+    <h2>Wydarzenia w sojuszu</h2>
+    <table class="borderGap eventsTable">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Wydarzenie</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="eventRow" data-event-type="founding">
+          <td class="date">dziś, 04:46</td>
+          <td class="event">
+            <a href="/profile/101">Gracz1</a> założył(a) nową osadę w miejscu <a class="mapCoords" href="/karte.php?x=89&amp;y=-97"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(89</span><span class="coordinatePipe">|</span><span class="coordinateY">-97)</span></span></a>.
+          </td>
+        </tr>
+        <tr class="eventRow" data-event-type="conquest">
+          <td class="date">dziś, 04:02</td>
+          <td class="event">
+            <a href="/profile/202">Gracz2</a> podbił(a) osadę w miejscu <a class="mapCoords" href="/karte.php?x=-139&amp;y=-27"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(-139</span><span class="coordinatePipe">|</span><span class="coordinateY">-27)</span></span></a>.
+          </td>
+        </tr>
+        <tr class="eventRow" data-event-type="loss">
+          <td class="date">dziś, 02:41</td>
+          <td class="event">
+            <a href="/profile/303">Gracz3</a> utracił(a) osadę w miejscu <a class="mapCoords" href="/karte.php?x=-127&amp;y=-53"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(-127</span><span class="coordinatePipe">|</span><span class="coordinateY">-53)</span></span></a>.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  /*
+   * Same-origin tile-details stub hook for later browser QA (todo 8).
+   *
+   * The userscript resolves coordinates through
+   *   POST /api/v1/map/tile-details  with  {"x":<int>,"y":<int>}
+   * and expects the live shape  { "html": "<div id=\"village_info\">...<a href=\"/region/66\">Sparta</a>...</div>" }.
+   *
+   * Before injecting the userscript, a browser test seeds the map keyed by "x,y":
+   *
+   *   window.__TRN_HARNESS_TILE_RESPONSES__["89,-97"] = {
+   *     html: '<div id="village_info"><a href="/region/66">Sparta</a></div>'
+   *   };
+   *
+   * and then wraps window.fetch so that same-origin map/tile-details POSTs are
+   * answered locally (never touching the live game):
+   *
+   *   const realFetch = window.fetch.bind(window);
+   *   window.fetch = (input, init = {}) => {
+   *     const url = String(input instanceof Request ? input.url : input);
+   *     if (url.includes('/api/v1/map/tile-details') && init.method === 'POST') {
+   *       const { x, y } = JSON.parse(init.body);
+   *       const payload = window.__TRN_HARNESS_TILE_RESPONSES__[x + ',' + y];
+   *       if (payload) {
+   *         return Promise.resolve(new Response(JSON.stringify(payload), {
+   *           status: 200,
+   *           headers: {
+   *             'Content-Type': 'application/json; charset=UTF-8',
+   *             'Cache-Control': 'no-store'
+   *           }
+   *         }));
+   *       }
+   *     }
+   *     return realFetch(input, init);
+   *   };
+   *
+   * Missing keys intentionally fall through to realFetch so failure-path tests
+   * (429, malformed JSON, missing region) can wrap fetch themselves.
+   */
+  window.__TRN_HARNESS_TILE_RESPONSES__ = window.__TRN_HARNESS_TILE_RESPONSES__ || {};
+</script>
+</body>
+</html>

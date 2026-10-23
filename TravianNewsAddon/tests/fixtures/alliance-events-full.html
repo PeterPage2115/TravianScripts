@@ -1,0 +1,46 @@
+<!--
+  Sanitized representative fixture for the full "Wydarzenia w sojuszu" view.
+  The user's screenshot of this view is NOT stored in this repository, so this
+  markup is reconstructed to match the three approved Polish event wordings and
+  the verified coordinate-link contract (`/karte.php?x=<int>&y=<int>`).
+
+  Sanitization: actor display names and profile ids are synthetic; coordinates are
+  ASCII signed integers in the URL query string. No cookies, tokens, session data,
+  HAR headers, reports, alliance names, or live player metadata are present.
+
+  Contract anchors:
+    - założył(a) nową osadę -> /karte.php?x=89&y=-97    (visible text "(89|-97)")
+    - podbił(a) osadę      -> /karte.php?x=-139&y=-27  (visible text "(-139|-27)")
+    - utracił(a) osadę     -> /karte.php?x=-127&y=-53  (visible text "(-127|-53)")
+-->
+<div id="allianceEvents" class="eventsWrapper">
+  <h2>Wydarzenia w sojuszu</h2>
+  <table class="borderGap eventsTable">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Wydarzenie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="eventRow" data-event-type="founding">
+        <td class="date">dziś, 04:46</td>
+        <td class="event">
+          <a href="/profile/101">Gracz1</a> założył(a) nową osadę w miejscu <a class="mapCoords" href="/karte.php?x=89&amp;y=-97"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(89</span><span class="coordinatePipe">|</span><span class="coordinateY">-97)</span></span></a>.
+        </td>
+      </tr>
+      <tr class="eventRow" data-event-type="conquest">
+        <td class="date">dziś, 04:02</td>
+        <td class="event">
+          <a href="/profile/202">Gracz2</a> podbił(a) osadę w miejscu <a class="mapCoords" href="/karte.php?x=-139&amp;y=-27"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(-139</span><span class="coordinatePipe">|</span><span class="coordinateY">-27)</span></span></a>.
+        </td>
+      </tr>
+      <tr class="eventRow" data-event-type="loss">
+        <td class="date">dziś, 02:41</td>
+        <td class="event">
+          <a href="/profile/303">Gracz3</a> utracił(a) osadę w miejscu <a class="mapCoords" href="/karte.php?x=-127&amp;y=-53"><span class="coordinates coordinatesWrapper"><span class="coordinateX">(-127</span><span class="coordinatePipe">|</span><span class="coordinateY">-53)</span></span></a>.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,8 @@
+node_modules/
+.codegraph/
+.omo/
+.playwright-mcp/
+# page captures from a live game account
+TravianNewsAddon/*.html
+# needs local page captures that are not in the repo
+TravianCropCounter/test.js

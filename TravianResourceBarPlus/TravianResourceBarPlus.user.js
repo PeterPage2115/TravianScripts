@@ -26,8 +26,8 @@ var version = '2.26.16.1';
 
 notRunYet = false;
 
-var homepageurl = 'https://github.com/adipiciu/Travian-scripts';
-var scripturl = 'https://github.com/adipiciu/Travian-scripts/raw/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js'
+var homepageurl = 'https://github.com/PeterPage2115/TravianScripts';
+var scripturl = 'https://github.com/PeterPage2115/TravianScripts/raw/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js'
 var bgcolor = ['#66ff66','#ffff4c','#ff5252']; //resource bar colors
 var vHColor = '#777777'; //hints (second name) color
 var cnColors = ['#F8FFD8','#FFE85B','#FF8888','#F0B8FF','#A0F0A0']; //Center Number colors

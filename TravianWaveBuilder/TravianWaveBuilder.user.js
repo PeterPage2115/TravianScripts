@@ -15,7 +15,7 @@
 function allInOneOpera () {
 
 var version = '2.11.1';
-var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
+var scriptURL = 'https://github.com/PeterPage2115/TravianScripts';
 var defInterval = 200;
 var sLang = detectLanguage();
 var langStrings = ["Add attack", "Remove attack", "Move attack up", "Move attack down", "Add multiple attacks (1-12 attacks)", "Interval between attacks, in milliseconds. Minimum interval is 100 ms.", "Attack type", "Interval", "ms"];

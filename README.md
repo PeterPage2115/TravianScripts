@@ -24,7 +24,9 @@ Fork skryptu *Travian wave builder* 2.11 (adipiciu). Działa na stronie *Miejsce
 - **Presety.** Zapisujesz jednostki, typ ataku i liczbę fal pod nazwą. Wybór presetu wypełnia formularz, a obok widać ikony jednostek.
 - **Presety-kolejki.** Układasz fale ręcznie (np. fejk: pierwsza fala inna niż reszta, jedna w środku z koniem), klikasz „Zapisz kolejkę”. Potem wybierasz kolejkę, wpisujesz cel i jedno „+” dodaje wszystkie fale po kolei. Błąd przy którejś fali zatrzymuje całą kolejkę.
 - **Podsumowanie wojska** pod przyciskiem „Wyślij”: ile dodasz, ile jest już w tabeli, ile jest w osadzie i ile zostanie. Brak wojska zaznaczony na czerwono.
+- **Eksport i import presetów.** „Eksport” daje tekst z wybranym presetem (albo wszystkimi, gdy żaden nie jest wybrany), który można wysłać innym, np. na Discordzie. „Import” wczytuje taki tekst. Cały sojusz może mieć te same kolejki fejków bez układania ich ręcznie.
 - Większe przyciski `+ − ↑ ↓`.
+- Interfejs po polsku (gdy gra jest po polsku) albo po angielsku.
 
 Presety zapisują się w `localStorage` przeglądarki, osobno dla każdego serwera.
 
@@ -49,7 +51,7 @@ Własny skrypt, działa tylko na `cw.x2.international.travian.com`. Przy wydarze
 
 ## Uwagi
 
-- Skrypty czytają i przekształcają wyświetlane strony. Wave Builder wysyła ataki tak samo jak oryginał (te same żądania, jak przy ręcznym wysyłaniu). Sprawdź regulamin swojego świata, zanim użyjesz skryptów.
+- Skrypty czytają i przekształcają wyświetlane strony. **Wave Builder wysyła kilka ataków jednym kliknięciem** (te same żądania co przy ręcznym wysyłaniu, w odstępach podanych w polu „Odstęp”). Zanim go użyjesz, sprawdź w grze „Zasady gry” swojego świata, czy takie narzędzia są dozwolone. Używasz na własne ryzyko.
 - Zmiany w forkach były sprawdzane składniowo (`node --check`) i ręcznie w grze. Niektóre elementy wyglądu mogą wymagać poprawek na innych rozdzielczościach i serwerach. Zgłaszaj w [Issues](https://github.com/PeterPage2115/TravianScripts/issues).
 - Grafiki z gry pochodzą z Traviana (Travian Games GmbH). Skrypty nie dołączają żadnych własnych grafik.
 

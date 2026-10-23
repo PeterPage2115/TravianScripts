@@ -15,14 +15,15 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        1.0.0
+// @version        1.0.1
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '1.0.0';
+// version comes from the userscript header, so it can never drift from @version
+var version = typeof GM_info != 'undefined' ? GM_info.script.version : '';
 
 notRunYet = false;
 

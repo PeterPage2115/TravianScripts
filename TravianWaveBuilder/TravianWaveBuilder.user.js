@@ -10,53 +10,58 @@
 // @license        GPL-3.0-or-later
 // @match          https://*.travian.com/build.php*
 
-// @version        1.0.0
+// @version        1.1.0
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '1.0.0';
+// version comes from the userscript header, so it can never drift from @version
+var version = typeof GM_info != 'undefined' ? GM_info.script.version : '';
 var scriptURL = 'https://github.com/PeterPage2115/TravianScripts';
 var defInterval = 200;
 var sLang = detectLanguage();
-var langStrings = ["Add attack", "Remove attack", "Move attack up", "Move attack down", "Add multiple attacks (1-12 attacks)", "Interval between attacks, in milliseconds. Minimum interval is 100 ms.", "Attack type", "Interval", "ms"];
 
-/*********************** localization ****************************/
+/*********************** localization: Polish, otherwise English ****************************/
 
-switch(sLang) {
-	case "ar-ae": //Arabic (U.A.E)
-	case "ar-eg": //Arabic (Egypt)
-	case "ar-sa": //Arabic (Saudi Arabia)
-	case "ar-sy": //Arabic (Syria)
-		langStrings = ["إضافة هجوم","إزالة الهجوم","تحريك الهجوم لأعلى","تحريك الهجوم لأسفل","إضافة هجمات متعددة (الهجمات من 1 إلى 12)","الفاصل الزمني بين الهجمات بالمللي ثانية. الحد الأدنى للفاصل الزمني هو 100 مللي ثانية.","نوع الهجوم","الفاصل الزمني","ملي ثانية"];
-		break;
-	case "fr-fr": //French
-		langStrings = ["Ajouter une attaque", "Supprimer l'attaque", "Déplacer l'attaque vers le haut", "Déplacer l'attaque vers le bas", "Ajoutez plusieurs attaques (1-12 attaques).", "Intervalle entre les attaques, en millisecondes. L'intervalle minimum est de 100 ms.", "Type d'attaque", "Intervalle", "ms"];
-		break;
-	case "hu-hu": //Hungarian
-		langStrings = ["Támadás hozzáadása", "Támadás törlése", "Támadás mozgatása fel", "Támadás mozgatása le", "Támadások hozzáadása (1-12 támadások)", "Támadások közötti intervallum (ms). Minimum intervallum 100 ms.", "Támadás típusa", "Intervallum", "ms"];
-		break;
-	case "it-it": //Italian
-		langStrings = ["Aggiungi attacco", "Rimuovi l'attacco", "Sposta l'attacco in alto", "Sposta l'attacco in basso", "Aggiungi più attacchi (1-12 attacchi).", "Intervallo tra attacchi, in millisecondi. L'intervallo minimo è 100 ms.", "Tipo di attacco", "Intervallo", "ms"];
-		break;
-	case "pt-pt": //Portuguese
-	case "pt-br": //Brazilian Portuguese
-		langStrings = ["Adicionar ataque", "Remover ataque", "Mover ataque para cima", "Mover ataque para baixo", "Adicionar multiplos ataques (1-12 ataques)", "Intervalo entre ataques, em milisegundos. Intervalo mínimo de 100 ms.", "Tipo de ataque", "Intervalo", "ms"];
-		break;
-	case "ro-ro": //Romanian
-		langStrings = ["Adaugă atac", "Șterge atacul", "Mută atacul în sus", "Mută atacul în jos", "Adaugă mai multe atacuri (1-12 atacuri)", "Intervalul dintre atacuri în milisecunde. Intervalul minim este de 100 ms.", "Tipul atacului", "Interval", "ms"];
-		break;
-	case "ru-ru": //Russian
-		langStrings = ["Добавить атаку", "Удалите атаку", "Переместить атаки вверх", "Переместить атаку вниз", "Добавьте несколько атак (1-12 атаки)", "Интервал между атаками, в миллисекундах. Минимальный интервал составляет 100 мс.", "Тип атаки", "Интервал", "мс"];
-		break;
-	case "tr-tr": //Turkish
-		langStrings = ["Saldırı ekle", "Saldırı çıkar", "saldırıyı yukarı kaydır", "saldırıyı asagı kaydır", "Çoklu saldırı ekle (1-12x saldırı)", "Saldırılar arasındaki aralık, milisaniye. en az aralık 100 ms'dir.", "Saldırı tipi", "aralık", "ms"];
-		break;
-	case "zh-cn": //Chinese
-		langStrings = ["添加攻击","移除攻击","上移攻击","下移攻击","添加多个攻击 (1-12 次攻击)","攻击间隔 以毫秒为单位。最小间隔为 100 毫秒。","攻击类型","间隔","毫秒"];
-		break;
-	default: //English
-}
+var isPL = /^pl/.test(sLang);
+var langStrings = isPL ?
+	["Dodaj atak", "Usuń atak", "Przesuń atak w górę", "Przesuń atak w dół", "Dodaj kilka ataków (1–12)", "Odstęp między atakami w milisekundach. Minimalny odstęp to 100 ms.", "Typ ataku", "Odstęp", "ms"] :
+	["Add attack", "Remove attack", "Move attack up", "Move attack down", "Add multiple attacks (1-12 attacks)", "Interval between attacks, in milliseconds. Minimum interval is 100 ms.", "Attack type", "Interval", "ms"];
+var tx = isPL ? {
+	preset: 'Preset:', none: '-- preset --', empty: '(pusty)',
+	save: 'Zapisz', saveTip: 'Zapisz jednostki, typ ataku i liczbę fal jako preset',
+	queue: 'Zapisz kolejkę', queueTip: 'Zapisz wszystkie fale z tabeli (w tej kolejności) jako preset-kolejkę',
+	del: 'Usuń', delTip: 'Usuń wybrany preset', delAsk: 'Usunąć preset „%s”?',
+	exp: 'Eksport', expTip: 'Skopiuj wybrany preset (albo wszystkie, gdy żaden nie jest wybrany) jako tekst dla innych',
+	imp: 'Import', impTip: 'Wczytaj presety z tekstu od kogoś innego',
+	namePreset: 'Nazwa presetu', nameQueue: 'Nazwa kolejki fal',
+	noInputs: 'Nie znaleziono pól jednostek, preset nie został zapisany.',
+	emptyTable: 'Tabela fal jest pusta – najpierw dodaj fale.',
+	expAsk: 'Skopiuj ten tekst (Ctrl+C) i wyślij go innym:',
+	impAsk: 'Wklej tekst z eksportu presetów:',
+	impBad: 'To nie jest poprawny eksport presetów.',
+	impDone: 'Wczytane presety: %s',
+	troops: 'Wojsko', queueHead: 'kolejka „%s” (%n fal)', presetHead: 'preset „%s” × %n', tableHead: 'w tabeli: %n fal',
+	cols: ['dodasz', 'w tabeli', 'w osadzie', 'zostanie']
+} : {
+	preset: 'Preset:', none: '-- preset --', empty: '(empty)',
+	save: 'Save', saveTip: 'Save troops, attack type and wave count as a preset',
+	queue: 'Save queue', queueTip: 'Save all waves from the table (in this order) as a queue preset',
+	del: 'Delete', delTip: 'Delete the selected preset', delAsk: 'Delete preset "%s"?',
+	exp: 'Export', expTip: 'Copy the selected preset (or all of them when none is selected) as text for others',
+	imp: 'Import', impTip: 'Load presets from text someone sent you',
+	namePreset: 'Preset name', nameQueue: 'Wave queue name',
+	noInputs: 'Troop inputs not found, preset not saved.',
+	emptyTable: 'The wave table is empty - add waves first.',
+	expAsk: 'Copy this text (Ctrl+C) and send it to others:',
+	impAsk: 'Paste the exported presets text:',
+	impBad: 'This is not a valid presets export.',
+	impDone: 'Imported presets: %s',
+	troops: 'Troops', queueHead: 'queue "%s" (%n waves)', presetHead: 'preset "%s" x %n', tableHead: 'in table: %n waves',
+	cols: ['to add', 'in table', 'in village', 'left']
+};
+function fmt ( str, a, n ) { return str.replace('%s', function () { return a; }).replace('%n', n); }
+
 
 /*********************** common library ****************************/
 
@@ -329,7 +334,7 @@ function loadPresets () {
 function fillPresetSelect (selected) {
 	var p = loadPresets();
 	presetSel.innerHTML = '';
-	presetSel.appendChild(new Option('-- preset --', ''));
+	presetSel.appendChild(new Option(tx.none, ''));
 	for( var n in p ) presetSel.appendChild(new Option(n, n));
 	presetSel.value = selected || '';
 }
@@ -382,7 +387,7 @@ function showPresetUnits () {
 		}
 	} else if( s ) {
 		unitIcons(s.troops);
-		presetView.appendChild($t(presetView.childNodes.length ? ' x'+(parseInt(multi.value) || 1) : '(empty)'));
+		presetView.appendChild($t(presetView.childNodes.length ? ' x'+(parseInt(multi.value) || 1) : tx.empty));
 	}
 	showSummary(s);
 }
@@ -418,18 +423,18 @@ function showSummary ( s ) {
 	summary.style.display = rows.length ? '' : 'none';
 	if( !rows.length ) return;
 	var head = [];
-	if( s ) head.push(s.waves ? 'kolejka „'+presetSel.value+'” ('+s.waves.length+' fal)' : 'preset „'+presetSel.value+'” × '+want);
-	if( tbl.tBodies.length ) head.push('w tabeli: '+tbl.tBodies.length+' fal');
-	summary.appendChild($em('DIV',['Wojsko – '+head.join(' · ')],[['class','rbp-sec-h']]));
-	summary.appendChild($em('TABLE',[$em('TR',[$e('TH'),$em('TH',['dodasz']),$em('TH',['w tabeli']),$em('TH',['w osadzie']),$em('TH',['zostanie'])])].concat(rows)));
+	if( s ) head.push(s.waves ? fmt(tx.queueHead, presetSel.value, s.waves.length) : fmt(tx.presetHead, presetSel.value, want));
+	if( tbl.tBodies.length ) head.push(fmt(tx.tableHead, '', tbl.tBodies.length));
+	summary.appendChild($em('DIV',[tx.troops+' – '+head.join(' · ')],[['class','rbp-sec-h']]));
+	summary.appendChild($em('TABLE',[$em('TR',[$e('TH'),$em('TH',[tx.cols[0]]),$em('TH',[tx.cols[1]]),$em('TH',[tx.cols[2]]),$em('TH',[tx.cols[3]])])].concat(rows)));
 }
 
 function savePreset () {
-	var name = prompt('Preset name', presetSel.value);
+	var name = prompt(tx.namePreset, presetSel.value);
 	if( ! name ) return;
 	var troops = {}, ins = troopInputs();
 	for( var t in ins ) troops[t] = ins[t].value;
-	if( ! Object.keys(ins).length ) { alert('Troop inputs not found, preset not saved.'); return; }
+	if( ! Object.keys(ins).length ) { alert(tx.noInputs); return; }
 	var ev = tForm.querySelector('input[name="eventType"]:checked');
 	var p = loadPresets();
 	p[name] = {troops: troops, eventType: ev ? ev.value : '', multi: multi.value};
@@ -456,8 +461,8 @@ function applyPreset () {
 
 // saves the current wave table (troops + attack type of every wave, in order) as a queue preset
 function saveQueue () {
-	if( ! tbl.tBodies.length ) { alert('Tabela fal jest pusta – najpierw dodaj fale.'); return; }
-	var name = prompt('Nazwa kolejki fal', presetSel.value);
+	if( ! tbl.tBodies.length ) { alert(tx.emptyTable); return; }
+	var name = prompt(tx.nameQueue, presetSel.value);
 	if( ! name ) return;
 	var waves = [];
 	for( var b=0; b<tbl.tBodies.length; b++ ) {
@@ -484,8 +489,47 @@ function plusClick () {
 	addWave();
 }
 
+// export: the selected preset, or all presets when none is selected
+function exportPresets () {
+	var p = loadPresets(), out = p;
+	if( presetSel.value ) { out = {}; out[presetSel.value] = p[presetSel.value]; }
+	prompt(tx.expAsk, JSON.stringify(out));
+}
+
+// imported text comes from other players: keep only well-formed presets with numeric values
+function cleanWave ( w ) {
+	if( !w || typeof w != 'object' || !w.troops || typeof w.troops != 'object' ) return null;
+	var troops = {};
+	for( var i=1; i<12; i++ ) troops['t'+i] = (''+(w.troops['t'+i] || '')).replace(/\D/g,'').slice(0,6);
+	return {troops: troops, eventType: (''+(w.eventType || '')).replace(/\D/g,'').slice(0,2)};
+}
+
+function importPresets () {
+	var text = prompt(tx.impAsk, '');
+	if( !text ) return;
+	var data = null;
+	try { data = JSON.parse(text); } catch(e) { }
+	var p = loadPresets(), names = [];
+	if( data && typeof data == 'object' && !Array.isArray(data) ) for( var name in data ) {
+		if( name == '__proto__' ) continue;
+		var src = data[name], clean = null;
+		if( src && Array.isArray(src.waves) ) {
+			var waves = src.waves.map(cleanWave).filter(Boolean).slice(0,50);
+			if( waves.length ) clean = {waves: waves};
+		} else if( (clean = cleanWave(src)) ) {
+			clean.multi = Math.min(12, Math.max(1, parseInt(src.multi) || 1));
+		}
+		if( clean ) { name = (''+name).slice(0,40); p[name] = clean; names.push(name); }
+	}
+	if( !names.length ) { alert(tx.impBad); return; }
+	localStorage.setItem(presetKey, JSON.stringify(p));
+	fillPresetSelect(names[0]);
+	showPresetUnits();
+	alert(fmt(tx.impDone, names.join(', ')));
+}
+
 function delPreset () {
-	if( ! presetSel.value || ! confirm('Delete preset "'+presetSel.value+'"?') ) return;
+	if( ! presetSel.value || ! confirm(fmt(tx.delAsk, presetSel.value)) ) return;
 	var p = loadPresets();
 	delete p[presetSel.value];
 	localStorage.setItem(presetKey, JSON.stringify(p));
@@ -542,16 +586,20 @@ for( var i=1; i<11; i++ ) {
 $am(hrow,[$c(trImg('unit uhero')),$c(langStrings[6])]);
 var presetSel = $e('SELECT',[['style','margin:0 8px;']]);
 presetSel.addEventListener('change',applyPreset,false);
-var presetSave = $a('Save',[['href','#'],['onclick',jsNone],['title','Save current troops, attack type and wave count as preset'],['style','margin-right:8px;']]);
+var presetSave = $a(tx.save,[['href','#'],['onclick',jsNone],['title',tx.saveTip],['style','margin-right:8px;']]);
 presetSave.addEventListener('click',savePreset,false);
-var queueSave = $a('Zapisz kolejkę',[['href','#'],['onclick',jsNone],['title','Zapisz wszystkie fale z tabeli (w tej kolejności) jako preset-kolejkę'],['style','margin-right:8px;']]);
+var queueSave = $a(tx.queue,[['href','#'],['onclick',jsNone],['title',tx.queueTip],['style','margin-right:8px;']]);
 queueSave.addEventListener('click',saveQueue,false);
-var presetDel = $a('Delete',[['href','#'],['onclick',jsNone],['title','Delete selected preset']]);
+var presetDel = $a(tx.del,[['href','#'],['onclick',jsNone],['title',tx.delTip],['style','margin-right:8px;']]);
 presetDel.addEventListener('click',delPreset,false);
+var presetExp = $a(tx.exp,[['href','#'],['onclick',jsNone],['title',tx.expTip],['style','margin-right:8px;']]);
+presetExp.addEventListener('click',exportPresets,false);
+var presetImp = $a(tx.imp,[['href','#'],['onclick',jsNone],['title',tx.impTip]]);
+presetImp.addEventListener('click',importPresets,false);
 var presetView = $e('DIV',[['style','margin-top:4px;line-height:20px;']]);
 multi.addEventListener('input',showPresetUnits,false);
 fillPresetSelect();
-var prow = $ee('TR',$em('TD',['Preset:',presetSel,presetSave,queueSave,presetDel,presetView],[['colspan',13],['style','background-color: transparent;padding:3px;']]));
+var prow = $ee('TR',$em('TD',[tx.preset,presetSel,presetSave,queueSave,presetDel,presetExp,presetImp,presetView],[['colspan',13],['style','background-color: transparent;padding:3px;']]));
 tbl.appendChild($em('THEAD',[prow,hrow]));
 
 var sendBtn = $g('ok').cloneNode(true);

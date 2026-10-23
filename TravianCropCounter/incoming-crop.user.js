@@ -1,6 +1,11 @@
 // ==UserScript==
 // @name         Travian - zboże oddziałów
-// @version      1.11
+// @namespace    peterpage-travian-scripts
+// @version      1.12
+// @homepageURL  https://github.com/PeterPage2115/TravianScripts
+// @supportURL   https://github.com/PeterPage2115/TravianScripts/issues
+// @updateURL    https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianCropCounter/incoming-crop.user.js
+// @downloadURL  https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianCropCounter/incoming-crop.user.js
 // @description  Sumuje zboże, atak i deff oddziałów przychodzących i stacjonujących (Miejsce zbiórki), ze wszystkich stron listy.
 // @match        https://*.travian.com/build.php*
 // @match        https://*.travian.com/village/statistics/troops*

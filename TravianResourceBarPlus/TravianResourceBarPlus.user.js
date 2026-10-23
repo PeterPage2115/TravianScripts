@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name           Travian Resource bar plus (fork)
 // @namespace      peterpage-travian-scripts
-// @updateURL      none
-// @downloadURL    none
-// @description    Shows travian resources (for Travian Legends and Travian Northern Legends)
+// @homepageURL    https://github.com/PeterPage2115/TravianScripts
+// @supportURL     https://github.com/PeterPage2115/TravianScripts/issues
+// @updateURL      https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js
+// @downloadURL    https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js
+// @description    Fork of adipiciu's Travian Resource bar plus: resource timers under the stock bar, new look, battle analyzer, speed tables
 // @author         adipiciu (based on Travian Resource bar plus version 2.8.14 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR
@@ -14,7 +16,7 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.16.1
+// @version        2.26.16.2
 // Fork: PeterPage (based on adipiciu/Travian-scripts 2.26.16)
 // ==/UserScript==
 
@@ -22,7 +24,7 @@
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.16.1';
+var version = '2.26.16.2';
 
 notRunYet = false;
 

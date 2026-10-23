@@ -1,20 +1,23 @@
 // ==UserScript==
 // @name           Travian wave builder (presets)
 // @namespace      peterpage-travian-scripts
-// @updateURL      none
-// @downloadURL    none
-// @description    Wave builder for Travian Legends and Travian Shores of War
+// @homepageURL    https://github.com/PeterPage2115/TravianScripts
+// @supportURL     https://github.com/PeterPage2115/TravianScripts/issues
+// @updateURL      https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianWaveBuilder/TravianWaveBuilder.user.js
+// @downloadURL    https://raw.githubusercontent.com/PeterPage2115/TravianScripts/main/TravianWaveBuilder/TravianWaveBuilder.user.js
+// @description    Fork of adipiciu's Travian wave builder: troop presets, wave queues and a troop summary
 // @author         adipiciu (based on Travian wave builder 0.5 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.11.1
+// @version        2.11.2
+// Fork of adipiciu/Travian-scripts (TravianWaveBuilder 2.11), maintained by PeterPage
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.11.1';
+var version = '2.11.2';
 var scriptURL = 'https://github.com/PeterPage2115/TravianScripts';
 var defInterval = 200;
 var sLang = detectLanguage();
